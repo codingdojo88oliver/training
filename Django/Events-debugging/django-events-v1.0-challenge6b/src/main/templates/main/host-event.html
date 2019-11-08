@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+	<h1>Host an Event:</h1>
+    <a href="/dashboard" class="host">Dashboard</a>
+    <a href="/logout" class="logout">Logout</a>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %} 	
+	<form method="POST" action="create-event">
+		{% csrf_token %}
+		<label>Event Name: </label>
+		<input type="text" name="name">
+		<label>Date: </label>
+		<input type="date" name="date">
+		<label>Location: </label>
+		<input type="text" name="location">
+		<label>Event Description: </label>
+		<textarea name="description"></textarea>
+		<label>Maximum Count of Attendees: </label>
+		<input type="number" name="max_attendees">
+		<input type="submit" name="" value="Add Event">
+	</form>
+	<p><a href="/dashboard">back</a></p>
+</div>
+{% endblock content %}
