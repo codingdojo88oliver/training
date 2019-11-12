@@ -34,6 +34,7 @@ def register():
 				"password": request.form['password'],
 			}
 			mysql.query_db(query, data)
+			flash("User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
 			return redirect("/")
 
 
@@ -98,7 +99,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user)
+	return render_template("host-event.html", user = user,name = session['name'])
 
 
 @app.route('/create-event', methods=['POST'])

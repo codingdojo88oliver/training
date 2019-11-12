@@ -1,0 +1,358 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  margin: 0;
+  line-height: 1.15;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+}
+button {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #6DB1FF;
+  border-radius: .25rem;
+  border: 1px solid transparent;
+  color: #fff;
+  font-size: 12px;
+  height: 28px;
+  padding: 0px 10px;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  vertical-align: middle;
+}
+button:hover {
+  background-color: #498fe0;
+}
+body {
+  background-color: #F7F9FE;
+}
+body h1 {
+  background-color: #fff;
+  border-radius: 9px;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  color: #313B57;
+  font-family: Helvetica;
+  font-size: 16px;
+  margin: 0px auto;
+  padding: 14px;
+  width: 560px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+body .container {
+  margin: 0px auto;
+  width: 560px;
+  position: relative;
+}
+body .container h5 {
+  color: #313B57;
+  font-family: Helvetica;
+  margin: 0px;
+}
+body .container form h5 {
+  text-align: center;
+  margin-bottom: 14px;
+  color: #313B57;
+  font-family: Helvetica;
+  font-size: 12px;
+}
+body .container form button {
+  float: right;
+}
+body .container form textarea {
+  height: 100px;
+  border-radius: 9px;
+  resize: none;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  color: #313B57;
+  font-family: Helvetica;
+  font-size: 12px;
+  margin-bottom: 14px;
+  padding-left: 10px;
+  width: 100%;
+  padding: 14px;
+}
+body .container form textarea:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  transition: 0.5s;
+}
+body .container .textarea-form h5 {
+  text-align: left;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+body .container #register_form {
+  margin-right: 12px;
+}
+body .container form[action="/register"],
+body .container form[action="/login"] {
+  background-color: #fff;
+  border-radius: 9px;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 100%;
+  padding: 14px;
+  vertical-align: top;
+  width: 272px;
+  margin-bottom: 14px;
+}
+body .container form[action="/register"] {
+  margin-right: 12px;
+}
+body .container form[action="/create-topic"] {
+  background-color: #fff;
+  border-radius: 9px;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  color: #313B57;
+  font-family: Helvetica;
+  font-size: 16px;
+  margin: 0px auto;
+  padding: 14px;
+  width: 100%;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  display: inline-block;
+  vertical-align: top;
+  height: 100%;
+}
+body .container form[action="/create-topic"] textarea {
+  background-color: #F7F9FE;
+  margin-bottom: 10px;
+}
+body input {
+  background-color: #F7F9FE;
+  border-radius: 5px;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  color: #313B57;
+  font-family: Helvetica;
+  font-size: 12px;
+  height: 28px;
+  margin-bottom: 14px;
+  padding-left: 10px;
+  width: 100%;
+}
+body input:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  transition: 0.5s;
+}
+body label {
+  color: #313B57;
+  color: #9398A8;
+  display: inline-block;
+  font-family: Helvetica;
+  font-size: 12px;
+  vertical-align: top;
+}
+body select {
+  background-color: #F7F9FE;
+  border-radius: 5px;
+  border: 1px solid #D6E0F9;
+  box-sizing: border-box;
+  color: #313B57;
+  font-family: Helvetica;
+  height: 28px;
+  margin-bottom: 14px;
+  padding-left: 10px;
+  width: 100%;
+}
+body .checkbox_container {
+  display: inline-block;
+  vertical-align: top;
+  width: 114px;
+}
+body .checkbox_container .row {
+  display: inline-block;
+  vertical-align: top;
+  width: 114px;
+}
+body .checkbox_container label:first-child {
+  display: block;
+  margin-bottom: 10px;
+}
+body .checkbox_container input {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+body .checkbox_container label {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 1px;
+  cursor: pointer;
+}
+body .logout {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: #6DB1FF;
+  text-decoration: none;
+  font-family: Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: transparent;
+  height: 48px;
+  padding: 18px;
+  border-radius: 0px 9px 9px 0px;
+  border-left: 1px solid transparent;
+}
+
+body .host {
+  position: absolute;
+  top: 0px;
+  right: 50px;
+  color: #6DB1FF;
+  text-decoration: none;
+  font-family: Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: transparent;
+  height: 48px;
+  padding: 18px;
+  border-left: 1px solid transparent;  
+}
+body .logout:hover, .host:hover {
+  background-color: #6DB1FF;
+  color: #fff;
+  transition: 0.21s;
+}
+body table {
+  width: 560px;
+  background-color: #fff;
+  border: 1px solid #D6E0F9;
+  border-collapse: collapse;
+  border-radius: 9px;
+  margin: 8px auto 14px auto;
+}
+body table form {
+  display: inline-block;
+  vertical-align: top;
+}
+body table a {
+  color: #6DB1FF;
+  text-decoration: none;
+}
+body table thead tr {
+  font-family: Helvetica;
+  color: #9398A8;
+  font-size: 12px;
+  height: 36px;
+}
+body table thead tr th {
+  padding: 10px;
+}
+body table tbody tr {
+  height: 36px;
+}
+body table tbody tr td {
+  padding: 10px;
+  font-size: 12px;
+  text-align: center;
+  font-family: Helvetica;
+  color: #9398A8;
+}
+body table tbody tr:nth-child(odd) {
+  background-color: #F5F8FF;
+}
+body table button {
+  height: 21px;
+  float: none !important;
+}
+body table .delete_button {
+  background-color: #FA9494;
+  margin: 0px 2px;
+}
+body table .delete_button:hover {
+  background-color: #d56565;
+}
+body table .throw_plane {
+  background-color: #5FD9A4;
+  margin: 0px 2px;
+}
+body table .throw_plane:hover {
+  background-color: #349a6e;
+}
+body .alert-danger {
+  background-color: #ffe4e4;
+  height: 36px;
+  border-radius: 9px;
+  text-align: center;
+  font-family: Helvetica;
+  padding: 12px;
+  font-size: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #ffcaca;
+  color: #ed7474;
+  font-weight: bold;
+}
+body .alert-success {
+  background-color: #e5fff4;
+  height: 36px;
+  border-radius: 9px;
+  text-align: center;
+  font-family: Helvetica;
+  padding: 12px;
+  font-size: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #b2f0d5;
+  color: #5FD9A4;
+  font-weight: bold;
+}
+@media only screen and (max-width: 590px) {
+  body {
+    padding: 14px;
+  }
+  body h1 {
+    margin: 0px;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+  body .container {
+    width: 100%;
+  }
+  body .container form[action="/register"],
+  body .container form[action="/login"] {
+    box-sizing: border-box;
+    margin: 0px;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+  body table {
+    width: 100%;
+  }
+  body .checkbox_container {
+    width: 100%;
+  }
+}
+@media only screen and (max-width: 480px) {
+  body table .delete_button {
+    display: block;
+    width: 98px;
+    margin: 8px auto 14px auto;
+  }
+  body table .throw_plane {
+    display: block;
+    width: 98px;
+    margin: 14px auto 8px auto;
+  }
+  body table form {
+    display: block;
+  }
+}

@@ -34,6 +34,7 @@ def register():
 				"password": request.form['password'],
 			}
 			mysql.query_db(query, data)
+			flash("User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
 			return redirect("/")
 
 
@@ -98,7 +99,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user)
+	return render_template("host-event.html", user = user,name = session['name'])
 
 
 @app.route('/create-event', methods=['POST'])
@@ -133,10 +134,11 @@ def createEvent():
 
 
 			mysql = connectToMySQL()
-			query = "INSERT INTO events (user_id, event_name, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
+			query = "INSERT INTO events (user_id, event_name, date, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(date)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
 			data = {
 				"user_id": session['user_id'],
 				"eventname": request.form['name'],
+				"date": request.form['date'],
 				"location": request.form['location'],
 				"description": request.form['description'],
 				"max_attendees": request.form['max_attendees'],

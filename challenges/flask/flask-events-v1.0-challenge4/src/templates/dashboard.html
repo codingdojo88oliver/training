@@ -36,6 +36,20 @@
                 {% endif %}
             </tbody>
     </table>
+    <h5>Events I'm Hosting:</h5>
+    <table class="table" id="events_im_hosting">
+        <tbody>
+        {% if events_im_hosting %}
+            {% for event_im_hosting in events_im_hosting %}
+            <tr>
+                <td><strong>{{ event_im_hosting['event_name'] }}</strong></td>
+                <td>Date: {{ event_im_hosting['date'].strftime('%m-%d-%Y') }}</td>
+                <td>Hosted by: <span>{{ name }}</span></td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
     </div>
     
 </body>

@@ -34,7 +34,7 @@ def register():
 				"password": request.form['password'],
 			}
 			mysql.query_db(query, data)
-			flash("User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
+			flash( "User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
 			return redirect("/")
 
 
@@ -53,16 +53,27 @@ def dashboard():
 			except Exception as e:
 				flash("Invalid session")
 				return redirect("/")
+			# events_im_hosting = Event.objects.filter(user=user)
 			mysql = connectToMySQL()
-			upcoming_events = "SELECT * FROM events"
-			return render_template("dashboard.html", name = session['name'], email = session['email'], upcoming_events = upcoming_events)
+			query = "SELECT * FROM events WHERE user_id = %(id)s;"
+			events_im_hosting = mysql.query_db(query, data)
+			events_im_hosting_ids = []
+			if events_im_hosting:
+				for event in events_im_hosting:
+					events_im_hosting_ids.append(event['id'])
+
+			mysql = connectToMySQL()
+			events = "SELECT * FROM events"
+			upcoming_events = mysql.query_db(events)
+
+			return render_template("dashboard.html", name = session['name'], upcoming_events = upcoming_events, events_im_hosting = events_im_hosting)
 		else:
 			flash("User is not logged in")
 			return redirect("/")
 	else:
 		flash("User is not logged in")
 		return redirect("/")
-	
+
 	return redirect("/dashboard")
 @app.route("/login", methods = ["POST"])
 def login():
@@ -74,15 +85,24 @@ def login():
 	user = mysql.query_db(query, data)
 	if user:
 		try:
-			flash("Invalid email and password combination")
-			return redirect("/")
+			mysql = connectToMySQL()
+			query = "SELECT * FROM users WHERE email = %(email)s AND password = %(password)s LIMIT 1;"
+			data = {
+				"email": request.form['email'],
+				"password": request.form['password'],
+			}
+			user = mysql.query_db(query, data)
+			session['is_logged_in'] = True
+			session['name'] = user[0]['name']
+			session['user_id'] = user[0]['id']
+			session['email'] = user[0]['email']
+			return redirect("/dashboard")
 		except Exception as e:
 			flash("Invalid email and password combination")
 			return redirect("/")
 	else:
 		flash( "Email does not exist in the database")
 		return redirect("/")
-
 @app.route('/host-event', methods=['GET'])
 def hostEvent():
 	try:
@@ -96,7 +116,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user, name = session['name'])
+	return render_template("host-event.html", user = user,name = session['name'])
 
 
 @app.route('/create-event', methods=['POST'])
