@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <h1>Hello, {{ user.name }}!</h1>
+        <a href="/logout" class="float-right">Logout</a>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}    
+    <div class="row">
+        <h5>Virtual planes landed in your location:</h5>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Country of Origin</th>
+                    <th>Time Arrived</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            {% if secret_messages %}
+            <tbody>
+                {% for secret_message in secret_messages %}
+                <tr>
+                    <td><a class="received-plane" href="/received-planes/{{ secret_message.id }}">{{ secret_message.plane.user.country }}</a></td>
+                    <td>{{ secret_message.created_at|date:"H:i:m M d, Y" }}</td>
+                    <td>{{ secret_message.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+    <div class="row">
+        <h5>My Planes:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Stamps</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            {% if planes %}
+            <tbody>
+                {% for plane in planes %}
+                <tr>
+                    <td>
+                        {% for stamp in plane.stamps.all %}
+                            <strong>{{ stamp.country }} {% if not forloop.last %}, {% endif %}</strong>
+                        {% endfor %}
+                    </td>
+                    <td><a class="my-plane" href="/my-planes/{{ plane.id  }}">{{ plane.created_at|date:"M d, Y" }}</a></td>
+                    <td>{{ plane.status }}</td>
+                    <td>
+                        <form method="POST" action="/throw-plane">
+                            {% csrf_token %}
+                            <input class="throw_plane_id" type="hidden" name="plane_id" value="{{ plane.id }}">
+                            <button class="btn btn-light">Throw Plane!</button>
+                        </form>
+                        <form method="POST" action="/delete-plane">
+                            {% csrf_token %}
+                            <input class="delete_plane_id" type="hidden" name="plane_id" value="{{ plane.id }}">
+                            <button class="btn btn-link">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div> 
+    <div class="row">
+        <h5>Write your message:</h5>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <form method="post" action="/create-plane">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        <textarea class="form-control" name="message"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary float-right">Create Paper Plane</button>
+            </form>                  
+        </div>
+    </div> 
+</div>
+{% endblock content %}
