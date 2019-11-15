@@ -54,7 +54,8 @@ def dashboard():
 				flash("Invalid session")
 				return redirect("/")
 			mysql = connectToMySQL()
-			upcoming_events = "SELECT * FROM events"
+			events = "SELECT * FROM events left join users ON  users.id = events.user_id  "
+			upcoming_events = mysql.query_db(query)
 			return render_template("dashboard.html", name = session['name'], email = session['email'], upcoming_events = upcoming_events)
 		else:
 			flash("User is not logged in")
@@ -74,8 +75,18 @@ def login():
 	user = mysql.query_db(query, data)
 	if user:
 		try:
-			flash("Invalid email and password combination")
-			return redirect("/")
+			mysql = connectToMySQL()
+			query = "SELECT * FROM users WHERE email = %(email)s AND password = %(password)s LIMIT 1;"
+			data = {
+				"email": request.form['email'],
+				"password": request.form['password'],
+			}
+			user = mysql.query_db(query, data)
+			session['is_logged_in'] = True
+			session['name'] = user[0]['name']
+			session['user_id'] = user[0]['id']
+			session['email'] = user[0]['email']
+			return redirect("/dashboard")
 		except Exception as e:
 			flash("Invalid email and password combination")
 			return redirect("/")
@@ -148,5 +159,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

@@ -55,16 +55,15 @@ def dashboard():
 				return redirect("/")
 			# events_im_hosting = Event.objects.filter(user=user)
 			mysql = connectToMySQL()
-			query = "SELECT * FROM events WHERE user_id = %(id)s;"
+			query = "SELECT * FROM events left join users on users.id = events.user_id WHERE  events.user_id = %(id)s;"
 			events_im_hosting = mysql.query_db(query, data)
-			events_im_hosting_ids = []
-			if events_im_hosting:
-				for event in events_im_hosting:
-					events_im_hosting_ids.append(event['id'])
-
+			
 			mysql = connectToMySQL()
 			events = "SELECT * FROM events"
-			upcoming_events = mysql.query_db(events)
+			data = {
+				"id_s": events_im_hosting_ids
+			}
+			upcoming_events = mysql.query_db(events,data)
 
 			return render_template("dashboard.html", name = session['name'], upcoming_events = upcoming_events, events_im_hosting = events_im_hosting)
 		else:
@@ -103,6 +102,7 @@ def login():
 	else:
 		flash( "Email does not exist in the database")
 		return redirect("/")
+
 @app.route('/host-event', methods=['GET'])
 def hostEvent():
 	try:
@@ -168,5 +168,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

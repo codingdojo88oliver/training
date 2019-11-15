@@ -37,29 +37,6 @@ def register():
 			flash("User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
 			return redirect("/")
 
-
-@app.route("/dashboard", methods = ["GET"])
-def dashboard():
-	if 'is_logged_in' in session:
-		if session['is_logged_in'] == True:
-			try:
-				mysql = connectToMySQL()
-				query = "SELECT * FROM users WHERE id = %(id)s LIMIT 1;"
-				data = {
-					"id": session['user_id']
-				}
-
-				user = mysql.query_db(query, data)
-			except Exception as e:
-				flash("Invalid session")
-				return redirect("/")
-			return render_template("dashboard.html", name = session['name'], email = session['email'])
-		else:
-			flash("User is not logged in")
-			return redirect("/")
-	else:
-		flash("User is not logged in")
-		return redirect("/")
 @app.route("/login", methods = ["POST"])
 def login():
 	mysql = connectToMySQL()
@@ -89,10 +66,42 @@ def login():
 		flash( "Email does not exist in the database")
 		return redirect("/")
 
+@app.route("/dashboard", methods = ["GET"])
+def dashboard():
+	if 'is_logged_in' in session:
+		if session['is_logged_in'] == True:
+			try:
+				mysql = connectToMySQL()
+				query = "SELECT * FROM users WHERE id = %(id)s LIMIT 1;"
+				data = {
+					"id": session['user_id']
+				}
+
+				user = mysql.query_db(query, data)
+			except Exception as e:
+				flash("Invalid session")
+				return redirect("/")
+			return render_template("dashboard.html", name = session['name'], email = session['email'])
+		else:
+			flash("User is not logged in")
+			return redirect("/")
+	else:
+		flash("User is not logged in")
+		return redirect("/")
+
 @app.route('/logout', methods=['GET'])
 def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

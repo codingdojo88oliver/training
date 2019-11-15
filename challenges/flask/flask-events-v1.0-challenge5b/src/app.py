@@ -57,29 +57,30 @@ def dashboard():
 			mysql = connectToMySQL()
 			query = "SELECT  events.date AS event_date, events.id AS event_id,  joins.id AS join_id, users.name AS names FROM joins LEFT JOIN events ON events.id = joins.event_id LEFT JOIN users ON joins.user_id = users.id WHERE joins.user_id = %(id)s;"
 			joined_events = mysql.query_db(query,data)
-			
+
 			utc = datetime.today()
 			upcoming_joined_event_ids = []
 			past_joined_event_ids = []
 			all_joined_event_ids = []
 			# print(joined_events)
-			if len(joined_events) > 0:
+			if joined_events:
 				for joined_event in joined_events:
 					all_joined_event_ids.append(joined_event['join_id'])
 					if joined_event['event_date'] > utc:
-						upcoming_joined_event_ids.append(joined_event['event_id'])
+						upcoming_joined_event_ids.append(joined_event['join_id'])
 					else:
-						past_joined_event_ids.append(joined_event['event_id'])
+						past_joined_event_ids.append(joined_event['join_id'])
 
 			# get all upcoming_joined_events
 				mysql = connectToMySQL()
-				query = "SELECT joins.id as joins_id, users.name, events.event_name, events.date FROM events LEFT JOIN users ON users.id = events.user_id LEFT JOIN joins ON joins.event_id = events.id WHERE events.id  IN  %(upcoming_joined_ids)s;"
+				query = "SELECT joins.id as joins_id, users.name, events.event_name, events.date FROM events LEFT JOIN users ON users.id = events.user_id LEFT JOIN joins ON joins.event_id = events.id WHERE joins.id  IN  %(upcoming_joined_ids)s;"
 				data = {
 						"upcoming_joined_ids": upcoming_joined_event_ids,
 						"ids": session['user_id']
 				}
 				upcoming_joined_events = mysql.query_db(query, data)
 				# get all past_joined_events
+				print(upcoming_joined_events)
 				mysql = connectToMySQL()
 				events = "SELECT * FROM events LEFT JOIN users ON users.id = events.user_id WHERE events.id IN  %(past_joined_ids)s;"
 				data = {
@@ -96,13 +97,13 @@ def dashboard():
 					"id": session['user_id']
 				}
 				events_not_yet_joined = mysql.query_db(event, data)
-				print(events_not_yet_joined)
 				upcoming_events = []
 				count = 0
 				for event in events_not_yet_joined:
-					if event['max_attendees'] > count :
+					count += 1
+					if event['max_attendees'] >= count :
 					 	upcoming_events.append(event)
-					return render_template("dashboard.html", name = session['name'], upcoming_joined_events = upcoming_joined_events, past_joined_events = past_joined_events, events_not_yet_joined = upcoming_events)
+				return render_template("dashboard.html", name = session['name'], upcoming_joined_events = upcoming_joined_events, past_joined_events = past_joined_events, events_not_yet_joined = upcoming_events)
 			else:
 				mysql = connectToMySQL()
 				event = "SELECT users.name as names, events.event_name as event_name, events.max_attendees as max_attendees, events.date as event_date, events.id as event_id FROM events LEFT JOIN users ON users.id = events.user_id;"
@@ -111,7 +112,7 @@ def dashboard():
 				count = 0
 				for event in events_not_yet_joined:
 					count += 1
-					if event['max_attendees'] > count:
+					if event['max_attendees'] >= count:
 					 	upcoming_events.append(event)
 				upcoming_joined_events = []
 				past_joined_events = []
@@ -226,7 +227,20 @@ def joinEvent():
 	except Exception as e:
 		flash("User is not logged in")
 		return redirect("/")
+	mysql = connectToMySQL()
+	query = "SELECT * FROM events WHERE id = %(event_id)s;"
+	data = {
+		"event_id":request.form['event_id'],
+	}
+	event = mysql.query_db(query, data)
 
+	mysql = connectToMySQL()
+	query = "INSERT INTO joins (user_id, event_id, created_at) VALUES (%(id)s, %(event_id)s, NOW());"
+	data = {
+		"id": session['user_id'],
+		"event_id":event[0]['id']
+	}
+	join = mysql.query_db(query,data)
 	flash("You just joined an event!")
 	return redirect('/dashboard')
 @app.route('/logout', methods=['GET'])
@@ -234,5 +248,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

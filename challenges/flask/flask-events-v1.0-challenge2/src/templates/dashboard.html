@@ -25,7 +25,15 @@
         <h5>Upcoming Events:</h5>
         <table class="table" id="upcoming_events">
             <tbody>
-          
+                 {% if upcoming_events %}
+                    {% for upcoming_event in upcoming_events %}
+                    <tr>
+                        <td><strong>{{ upcoming_event['event_name'] }}</strong></td>
+                        <td>Date: {{ upcoming_event['date'].strftime('%m-%d-%Y') }}</td>
+                         <td>Hosted by: <span>{{ name }}</span></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
     </table>
     </div>

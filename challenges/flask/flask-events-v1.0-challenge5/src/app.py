@@ -228,20 +228,7 @@ def joinEvent():
 	except Exception as e:
 		flash("User is not logged in")
 		return redirect("/")
-	mysql = connectToMySQL()
-	query = "SELECT * FROM events WHERE id = %(event_id)s;"
-	data = {
-		"event_id":request.form['event_id'],
-	}
-	event = mysql.query_db(query, data)
-
-	mysql = connectToMySQL()
-	query = "INSERT INTO joins (user_id, event_id, created_at) VALUES (%(id)s, %(event_id)s, NOW());"
-	data = {
-		"id": session['user_id'],
-		"event_id":event[0]['id']
-	}
-	join = mysql.query_db(query,data)
+	
 	flash("You just joined an event!")
 	return redirect('/dashboard')
 @app.route('/logout', methods=['GET'])
@@ -249,5 +236,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

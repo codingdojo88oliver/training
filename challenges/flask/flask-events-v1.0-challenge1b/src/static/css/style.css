@@ -1,3 +1,4 @@
+*,
 ::after,
 ::before {
   box-sizing: border-box;
@@ -21,7 +22,7 @@ button {
   vertical-align: middle;
 }
 button:hover {
-  background-color: #498fe0;  
+  background-color: #498fe0;
 }
 body {
   background-color: #F7F9FE;
@@ -210,7 +211,24 @@ body .logout {
   border-radius: 0px 9px 9px 0px;
   border-left: 1px solid transparent;
 }
-body .logout:hover {
+
+body .host {
+  position: absolute;
+  top: 0px;
+  right: 50px;
+  color: #6DB1FF;
+  text-decoration: none;
+  font-family: Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: transparent;
+  height: 48px;
+  padding: 18px;
+  border-left: 1px solid transparent;  
+}
+body .logout:hover, .host:hover {
   background-color: #6DB1FF;
   color: #fff;
   transition: 0.21s;

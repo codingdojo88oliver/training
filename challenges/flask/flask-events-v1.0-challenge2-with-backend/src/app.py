@@ -53,16 +53,21 @@ def dashboard():
 			except Exception as e:
 				flash("Invalid session")
 				return redirect("/")
+			
 			mysql = connectToMySQL()
-			upcoming_events = "SELECT * FROM events"
+			events = "SELECT * FROM events left join users ON  users.id = events.user_id  "
+			upcoming_events = mysql.query_db(query)
 			return render_template("dashboard.html", name = session['name'], email = session['email'], upcoming_events = upcoming_events)
+		
 		else:
 			flash("User is not logged in")
 			return redirect("/")
 	else:
 		flash("User is not logged in")
 		return redirect("/")
+	
 	return redirect("/dashboard")
+
 @app.route("/login", methods = ["POST"])
 def login():
 	mysql = connectToMySQL()
@@ -157,5 +162,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

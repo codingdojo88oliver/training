@@ -55,7 +55,7 @@ def dashboard():
 				return redirect("/")
 			# events_im_hosting = Event.objects.filter(user=user)
 			mysql = connectToMySQL()
-			query = "SELECT * FROM events"
+			query = "SELECT * FROM events;"
 			events_im_hosting = mysql.query_db(query, data)
 			events_im_hosting_ids = []
 			if events_im_hosting:
@@ -63,7 +63,7 @@ def dashboard():
 					events_im_hosting_ids.append(event['id'])
 
 			mysql = connectToMySQL()
-			events = "SELECT * FROM events WHERE id IN %(id_s)s;"
+			events = "SELECT * FROM events left join users ON  users.id = events.user_id WHERE events.id NOT IN %(id_s)s; "
 			data = {
 				"id_s": events_im_hosting_ids
 			}
@@ -120,7 +120,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user, name = session['name'])
+	return render_template("host-event.html", user = user,name = session['name'])
 
 
 @app.route('/create-event', methods=['POST'])
@@ -172,5 +172,14 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+@app.route('/reset', methods=['GET'])
+def reset():
+	mysql = connectToMySQL()
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
+	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
+
+	return redirect('/')
+
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(port=8000, debug=True)

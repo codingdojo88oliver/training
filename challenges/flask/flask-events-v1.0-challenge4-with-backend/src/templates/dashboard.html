@@ -30,7 +30,7 @@
                     <tr>
                         <td><strong>{{ upcoming_event['event_name'] }}</strong></td>
                         <td>Date: {{ upcoming_event['date'].strftime('%m-%d-%Y') }}</td>
-                         <td>Hosted by: <span>{{ name }}</span></td>
+                        <td>Hosted by: <span>{{ upcoming_event['name'] }}</span></td>
                     </tr>
                     {% endfor %}
                 {% endif %}
@@ -44,7 +44,7 @@
             <tr>
                 <td><strong>{{ event_im_hosting['event_name'] }}</strong></td>
                 <td>Date: {{ event_im_hosting['date'].strftime('%m-%d-%Y') }}</td>
-                <td>Hosted by: <span>{{ name }}</span></td>
+                <td>Hosted by: <span>{{ event_im_hosting['name'] }}</span></td>
             </tr>
             {% endfor %}
         {% endif %}
