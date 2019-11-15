@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+	<div class="container">
+
+		<h1>HELLO {{ ssname }} !!!</h1>
+		<a class="host" href="/host-event">Host an Event</a>
+		<a class="logout" href="/logout">Logout</a>
+		{% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %}  
+
+		 <h5>Upcoming Events:</h5>
+        <table class="table" id="upcoming_events">
+            <tbody>
+                 {% if upcoming_events %}
+                    {% for upcoming_event in upcoming_events %}
+                    <tr>
+                        <td><strong>{{ upcoming_event['event_name'] }}</strong></td>
+                        <td>Date: {{ upcoming_event['date'].strftime('%m-%d-%Y') }}</td>
+                         <td>Hosted by: <span>{{ upcoming_event['name'] }}</span></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+
+
+
+	</div>
+
+
+
+
+
+</body>
+</html>

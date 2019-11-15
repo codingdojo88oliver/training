@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Events</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, {{ ssname }}!!</h1>
+        <a href="/logout" class="logout">Logout</a>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %}  
+        <form method="POST" action="/create-event">
+            <label>Event Name: </label>
+            <input type="text" name="name">
+            <label>Date: </label>
+            <input type="date" name="date">
+            <label>Location: </label>
+            <input type="text" name="location">
+            <label>Event Description: </label>
+            <textarea name="description"></textarea>
+            <label>Maximum Count of Attendees: </label>
+            <input type="number" name="max_attendees">
+            <input type="submit" name="" value="Add Event">
+        </form>
+        <p><a href="/dashboard">back</a></p>
+    </div>
+    
+</body>
+</html>
+

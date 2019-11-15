@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+	<p>From: {{ message.plane.user.country }}</p>
+	<p>{{ message.plane.message }}</p>
+	<p>Stamps:</p>
+	<p>
+		{% if stamps %}
+			{% for stamp in stamps %}
+				<strong>{{ stamp.country }} {% if not forloop.last %}, {% endif %}</strong>
+			{% endfor %}
+		{% endif %}
+	</p>
+	<p><a href="/dashboard">back</a></p>
+</div>
+
+
+{% endblock content %}
