@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Hello, {{ user.name }}!</h1>
+    <a href="/logout" class="logout">Logout</a>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %} 
+    <h5>Share a Quote:</h5>
+    <form method="post" action="/create-quote">
+        {% csrf_token %}
+        <input class="form-control" type="text" name="quoted_by" placeholder="Quote By">
+        <textarea class="form-control" name="quote" placeholder="Quote"></textarea>
+        <button type="submit" class="btn btn-primary float-right">Add Quote</button>
+    </form>
+    <h5>Inspirational Quotes:</h5>
+    <table class="table" id="inspirational_quotes">
+        <tbody>
+        {% if quotes %}
+            {% for quote in quotes %}
+            <tr>
+                <td><strong>{{ quote.quoted_by }}:</strong></td>
+                <td>"{{ quote.quote }}"</td>
+                <td>Posted By: <span>{{ quote.user.name }}</span></td>
+                {% if quote.user.id == user.id %}
+                <td>
+                    <form method="POST" action="delete-quote">
+                        {% csrf_token %}
+                        <input class="quote_id" type="hidden" name="quote_id" value="{{ quote.id }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
+                <td>
+                    <form method="POST" action="move-to-favorites">
+                        {% csrf_token %}
+                        <input class="quote_id" type="hidden" name="quote_id" value="{{ quote.id }}">
+                        <button type="submit">Move to Favorites</button>
+                    </form>                    
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+    <h5>Your Favorite Quotes:</h5>
+    <table class="table" id="favorite_quotes">
+        <tbody>
+        {% if favorite_quotes %}
+            {% for favorite_quote in favorite_quotes %}
+            <tr>
+                <td><strong>{{ favorite_quote.quote.quoted_by }}:</strong></td>
+                <td>"{{ favorite_quote.quote.quote }}"</td>
+                <td>Posted By: <span>{{ favorite_quote.user.name }}</span></td>
+                <td>
+                    <form method="POST" action="remove-from-favorites">
+                        {% csrf_token %}
+                        <input class="favorite_id" type="hidden" name="favorite_id" value="{{ favorite_quote.id }}">
+                        <button type="submit">Remove from list</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table> 
+</div>
+{% endblock content %}
