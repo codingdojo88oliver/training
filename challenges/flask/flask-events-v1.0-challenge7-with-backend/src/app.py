@@ -84,12 +84,12 @@ def dashboard():
 				return redirect("/")
 
 			mysql = connectToMySQL()
-			events = "SELECT events.event_name, events.date, users.name FROM events LEFT join users ON events.user_id = users.id;"
+			events = "SELECT events.id as event_id, users.id, events.event_name, events.date, users.name FROM events LEFT join users ON events.user_id = users.id;"
 			upcoming_events = mysql.query_db(events)
 
 
 			
-			return render_template("dashboard.html", ssname = session['name'], upcoming_events = upcoming_events)
+			return render_template("dashboard.html", ssname = user, upcoming_events = upcoming_events)
 		else:
 			flash("User is not logged in")
 			return redirect("/")
@@ -99,6 +99,29 @@ def dashboard():
 
 	return redirect("/dashboard")
 
+
+@app.route("/delete-event", methods=["POST"])
+def deleteEvent():
+	try:
+		mysql = connectToMySQL()
+		events = "SELECT * from users where id = %(id)s;"
+		data = {
+			"id": session['user_id']
+		}
+		user = mysql.query_db(events, data)
+	except Exception as e:
+		flash("User not logged in")
+		return redirect("/dashboard")
+
+	mysql = connectToMySQL()
+	query = "DELETE FROM events where events.id = %(id)s;"
+	data = {
+		"id": request.form['event_id']
+	}
+	print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+
+	upcoming_events = mysql.query_db(query, data)
+	return redirect("/dashboard")
 
 @app.route('/host-event', methods=['GET'])
 def hostEvent():
@@ -166,6 +189,7 @@ def logout():
 	session.clear()
 	return redirect("/")
 
+
 @app.route('/reset', methods=['GET'])
 def reset():
 	mysql = connectToMySQL()
@@ -174,7 +198,6 @@ def reset():
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
 
 	return redirect('/')
-
 
 if __name__ == "__main__":
 	app.run(debug = True)
