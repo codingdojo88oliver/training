@@ -1,73 +1,44 @@
-from flask import Flask, render_template, request, redirect, flash, session
-from mysqlconnection import connectToMySQL
-from datetime import date, datetime
+from flask import Flask, render_template,request, redirect, session, flash
+from datetime import datetime, date
+from mysqlconnection import connectToMySQL 
+from pytz import timezone
 app = Flask(__name__)
-app.secret_key = "keep it secret, keep it safe"
+app.secret_key = 'keep it secret, keep it safe'
 
-
-@app.route('/')
+@app.route("/")
 def index():
-
+	
 	return render_template("index.html")
 
-@app.route('/register', methods=['POST'])
+@app.route("/register", methods=["POST"])
 def register():
 	errors = {}
 	if request.method == "POST":
 		try:
-			if len(request.form['name']) < 3:
-				flash("Name should be at least 3 characters!")
-			if len(request.form['email']) < 6:
-				flash("Email shoud be at least 6 characters!")
+			if  len(request.form['name']) < 5:
+				flash("Name should be at least 5 characters")
 			if len(request.form['password']) < 8:
-				flash("Password should be at least 8 characters!")
+				flash("Password should be at least 8 characters")
 			if request.form['password'] != request.form['c_password']:
-				flash("Passwords do not match!")
+				flash("Passwords do not match")
 		except Exception as e:
-			flash("Unknown error!")
-
+				flash("Unknown error")
 		if '_flashes' in session.keys():
 			return redirect('/')
-
-
 		else:
 			mysql = connectToMySQL()
-			query = "INSERT INTO users (name, email, password, created_at) VALUES (%(name)s, %(mail)s, %(pass)s, NOW());"
+			query = "INSERT INTO users (name, email, password,created_at) VALUES (%(name)s, %(email)s, %(password)s,NOW());"
 			data = {
 				"name": request.form['name'],
-				"mail": request.form['email'],
-				"pass": request.form['password'],
-				}
+				"email": request.form['email'],
+				"password": request.form['password'],
+			}
 			mysql.query_db(query, data)
-			flash("User" + request.form['name'] + "with email:" + request.form['email'] + "Success")
+			flash( "User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
 			return redirect("/")
 
 
-@app.route("/login", methods=["POST"])
-def login():
-	try:
-		mysql = connectToMySQL()
-		query = "SELECT * FROM users WHERE email = %(e)s AND password = %(p)s LIMIT 1;"
-		data = {
-			"e": request.form['email'],
-			"p": request.form['password'],
-		}
-
-		user = mysql.query_db(query, data)
-		session['is_logged_in'] = True
-		session['name'] = user[0]['name']
-		session['user_id'] = user[0]['id']
-		session['email'] = user[0]['email']
-		return redirect("/dashboard")
-	except Exception as e:
-		flash("Invalid email and password combination")
-		return redirect("/")
-
-
-	return redirect("/")
-
-
-@app.route("/dashboard")
+@app.route("/dashboard", methods = ["GET"])
 def dashboard():
 	if 'is_logged_in' in session:
 		if session['is_logged_in'] == True:
@@ -82,14 +53,11 @@ def dashboard():
 			except Exception as e:
 				flash("Invalid session")
 				return redirect("/")
-
 			mysql = connectToMySQL()
-			events = "SELECT events.id as event_id, users.id, events.event_name, events.date, users.name FROM events LEFT join users ON events.user_id = users.id;"
-			upcoming_events = mysql.query_db(events)
-
-
+			query = "SELECT * FROM events;"
+			upcoming_events = mysql.query_db(query)
 			
-			return render_template("dashboard.html", ssname = user, upcoming_events = upcoming_events)
+			return render_template("/dashboard.html", user_id = user[0]['id'], upcoming_events = upcoming_events)
 		else:
 			flash("User is not logged in")
 			return redirect("/")
@@ -98,9 +66,7 @@ def dashboard():
 		return redirect("/")
 
 	return redirect("/dashboard")
-
-
-@app.route("/delete-event", methods=["POST"])
+@app.route("/delete-event", methods = ["POST"])
 def deleteEvent():
 	try:
 		mysql = connectToMySQL()
@@ -118,10 +84,38 @@ def deleteEvent():
 	data = {
 		"id": request.form['event_id']
 	}
-	print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+	event = mysql.query_db(query, data)
 
-	upcoming_events = mysql.query_db(query, data)
-	return redirect("/dashboard")
+	flash("You just deleted an event!")
+	return redirect('/dashboard')
+@app.route("/login", methods = ["POST"])
+def login():
+	mysql = connectToMySQL()
+	query = "SELECT * FROM users WHERE email = %(email)s LIMIT 1;"
+	data = {
+		"email": request.form['email'],
+	}
+	user = mysql.query_db(query, data)
+	if user:
+		try:
+			mysql = connectToMySQL()
+			query = "SELECT * FROM users WHERE email = %(email)s AND password = %(password)s LIMIT 1;"
+			data = {
+				"email": request.form['email'],
+				"password": request.form['password'],
+			}
+			user = mysql.query_db(query, data)
+			session['is_logged_in'] = True
+			session['name'] = user[0]['name']
+			session['user_id'] = user[0]['id']
+			session['email'] = user[0]['email']
+			return redirect("/dashboard")
+		except Exception as e:
+			flash("Invalid email and password combination")
+			return redirect("/")
+	else:
+		flash( "Email does not exist in the database")
+		return redirect("/")
 
 @app.route('/host-event', methods=['GET'])
 def hostEvent():
@@ -136,7 +130,8 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user, ssname = session['name'])
+	return render_template("host-event.html", user = user, name = session['name'])
+
 
 @app.route('/create-event', methods=['POST'])
 def createEvent():
@@ -182,13 +177,39 @@ def createEvent():
 			event = mysql.query_db(query, data)
 			flash("You just created a new event!")
 			return redirect('/dashboard')
-	
+@app.route('/join-event', methods=['POST'])
+def joinEvent():
+	try:
+		mysql = connectToMySQL()
+		query = "SELECT * FROM users WHERE id = %(id)s LIMIT 1;"
+		data = {
+			"id": session['user_id']
+		}
+		user = mysql.query_db(query, data)
+	except Exception as e:
+		flash("User is not logged in")
+		return redirect("/")
+	mysql = connectToMySQL()
+	query = "SELECT * FROM events WHERE id = %(event_id)s;"
+	data = {
+		"event_id":request.form['event_id'],
+	}
+	event = mysql.query_db(query, data)
+
+	mysql = connectToMySQL()
+	query = "INSERT INTO joins (user_id, event_id, created_at) VALUES (%(id)s, %(event_id)s, NOW());"
+	data = {
+		"id": session['user_id'],
+		"event_id":event[0]['id']
+	}
+	join = mysql.query_db(query,data)
+	flash("You just joined an event!")
+	return redirect('/dashboard')
 
 @app.route('/logout', methods=['GET'])
 def logout():
 	session.clear()
 	return redirect("/")
-
 
 @app.route('/reset', methods=['GET'])
 def reset():
@@ -200,5 +221,5 @@ def reset():
 	return redirect('/')
 
 if __name__ == "__main__":
-	app.run(debug = True)
+	app.run(port=8000, debug=True)
 

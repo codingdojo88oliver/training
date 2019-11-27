@@ -1,24 +1,24 @@
 import pymysql.cursors
 import os
 
-
 class MySQLConnection:
 	def __init__(self):
-		connectionn = pymysql.connect(
+		connection = pymysql.connect(
 			host = 'localhost',
-			user = 'root',
-			password = '',
-			db = 'demo',
-			charset = 'utf8mb4',
+            user = 'root', # change the user and password as needed
+            password = 'root', 
+            db = 'demo',
+            charset = 'utf8mb4',
 			cursorclass = pymysql.cursors.DictCursor,
 			autocommit = True)
-		self.connection = connectionn
+
+		self.connection = connection
 	def query_db(self, query, data=None):
 		with self.connection.cursor() as cursor:
 			try:
 				query = cursor.mogrify(query, data)
 				print("Running Query:", query)
-
+     
 				executable = cursor.execute(query, data)
 				if query.lower().find("insert") >= 0:
 					# if the query is an insert, return the id of the last row, since that is the row we just added
@@ -37,6 +37,6 @@ class MySQLConnection:
 				# in case the query fails
 				print("Something went wrong", e)
 				return False
-
+				
 def connectToMySQL():
 	return MySQLConnection()

@@ -45,23 +45,30 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
-	try:
-		mysql = connectToMySQL()
-		query = "SELECT * FROM users WHERE email = %(e)s AND password = %(p)s LIMIT 1;"
-		data = {
-			"e": request.form['email'],
-			"p": request.form['password'],
-		}
+	mysql = connectToMySQL()
+	query = "SELECT * FROM users WHERE email = %(email)s;"
+	data = {
+			"email": request.form['email'],
+	}
+	email = mysql.query_db(query, data)
+	if email:
+		try:
+			mysql = connectToMySQL()
+			query = "SELECT * FROM users WHERE email = %(email)s AND password = %(password)s LIMIT 1;"
+			data = {
+				"email": request.form['email'],
+				"password": request.form['password'],
+			}
 
-		user = mysql.query_db(query, data)
-		session['is_logged_in'] = True
-		session['name'] = user[0]['name']
-		session['user_id'] = user[0]['id']
-		session['email'] = user[0]['email']
-		return redirect("/dashboard")
-	except Exception as e:
-		flash("Invalid email and password combination")
-		return redirect("/")
+			user = mysql.query_db(query, data)
+			session['is_logged_in'] = True
+			session['name'] = user[0]['name']
+			session['user_id'] = user[0]['id']
+			session['email'] = user[0]['email']
+			return redirect("/dashboard")
+		except Exception as e:
+			flash("Invalid email and password combination")
+			return redirect("/")
 
 
 	return redirect("/")
@@ -84,12 +91,12 @@ def dashboard():
 				return redirect("/")
 
 			mysql = connectToMySQL()
-			events = "SELECT events.event_name, events.date, users.name FROM events LEFT join users ON events.user_id = users.id;"
-			upcoming_events = mysql.query_db(events)
+			query = "SELECT * FROM events;"
+			upcoming_events = mysql.query_db(query)
 
 
-			
-			return render_template("dashboard.html", ssname = session['name'], upcoming_events = upcoming_events)
+			print(upcoming_events)
+			return render_template("dashboard.html", user = user, upcoming_events = upcoming_events)
 		else:
 			flash("User is not logged in")
 			return redirect("/")
@@ -113,7 +120,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user, ssname = session['name'])
+	return render_template("host-event.html", user = user, name = session['name'])
 
 @app.route('/create-event', methods=['POST'])
 def createEvent():
@@ -147,7 +154,7 @@ def createEvent():
 
 
 			mysql = connectToMySQL()
-			query = "INSERT INTO events (user_id, event_name, date, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(date)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
+			query = "INSERT INTO events (user_id, name, date, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(date)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
 			data = {
 				"user_id": session['user_id'],
 				"eventname": request.form['name'],
@@ -175,7 +182,5 @@ def reset():
 
 	return redirect('/')
 
-
 if __name__ == "__main__":
-	app.run(debug = True)
-
+	app.run(port=8000, debug=True)

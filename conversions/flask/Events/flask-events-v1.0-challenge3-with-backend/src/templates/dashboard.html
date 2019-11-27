@@ -7,7 +7,7 @@
 
 	<div class="container">
 
-		<h1>HELLO {{ ssname }} !!!</h1>
+		<h1>HELLO {{ user[0]['name'] }} !!!</h1>
 		<a class="host" href="/host-event">Host an Event</a>
 		<a class="logout" href="/logout">Logout</a>
 		{% with messages = get_flashed_messages() %}
@@ -24,9 +24,9 @@
                  {% if upcoming_events %}
                     {% for upcoming_event in upcoming_events %}
                     <tr>
-                        <td><strong>{{ upcoming_event['event_name'] }}</strong></td>
+                        <td><strong>{{ upcoming_event['name'] }}</strong></td>
                         <td>Date: {{ upcoming_event['date'].strftime('%m-%d-%Y') }}</td>
-                         <td>Hosted by: <span>{{ upcoming_event['name'] }}</span></td>
+                         <td>Hosted by: <span>{{ upcoming_event[] }} {{ user[0]['name'] }}</span></td>
                     </tr>
                     {% endfor %}
                 {% endif %}

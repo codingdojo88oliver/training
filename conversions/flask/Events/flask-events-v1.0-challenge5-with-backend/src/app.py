@@ -55,7 +55,7 @@ def dashboard():
 				return redirect("/")
 			# utc = date.today()
 			mysql = connectToMySQL()
-			query = "SELECT  events.date AS event_date, events.id AS event_id,  joins.id AS join_id, users.name AS names FROM joins LEFT JOIN events ON events.id = joins.event_id LEFT JOIN users ON joins.user_id = users.id WHERE joins.user_id = %(id)s;"
+			query = "SELECT  events.date AS event_date, events.id AS event_id,  joins.id AS join_id, users.name AS names FROM joins LEFT JOIN events ON events.id = joins.event LEFT JOIN users ON joins.user = users.id WHERE joins.user = %(id)s;"
 			joined_events = mysql.query_db(query,data)
 
 			utc = datetime.today()
@@ -73,16 +73,15 @@ def dashboard():
 
 			# get all upcoming_joined_events
 				mysql = connectToMySQL()
-				query = "SELECT joins.id as joins_id, users.name, events.event_name, events.date FROM events LEFT JOIN users ON users.id = events.user_id LEFT JOIN joins ON joins.event_id = events.id WHERE joins.id  IN  %(upcoming_joined_ids)s;"
+				query = "SELECT joins.id as joins_id, users.name, events.name as event_name, events.date FROM events LEFT JOIN users ON users.id = events.user LEFT JOIN joins ON joins.event = events.id WHERE joins.id  IN  %(upcoming_joined_ids)s;"
 				data = {
 						"upcoming_joined_ids": upcoming_joined_event_ids,
 						"ids": session['user_id']
 				}
 				upcoming_joined_events = mysql.query_db(query, data)
 				# get all past_joined_events
-				print(upcoming_joined_events)
 				mysql = connectToMySQL()
-				events = "SELECT * FROM events LEFT JOIN users ON users.id = events.user_id WHERE events.id IN  %(past_joined_ids)s;"
+				events = "SELECT * FROM events LEFT JOIN users ON users.id = events.user WHERE events.id IN  %(past_joined_ids)s;"
 				data = {
 					"past_joined_ids": past_joined_event_ids,
 				}
@@ -91,7 +90,7 @@ def dashboard():
 				past_joined_events = []
 				# print(past_joined_events)
 				mysql = connectToMySQL()
-				event = "SELECT users.name as names, events.event_name as event_name, events.max_attendees as max_attendees, events.date as event_date, events.id as event_id FROM events LEFT JOIN users ON users.id = events.user_id WHERE events.id NOT IN  %(all_joined_event)s;"
+				event = "SELECT users.name as names, events.name as event_name, events.max_attendees as max_attendees, events.date as event_date, events.id as event_id FROM events LEFT JOIN users ON users.id = events.user WHERE events.id NOT IN  %(all_joined_event)s;"
 				data = {
 					"all_joined_event": all_joined_event_ids,
 					"id": session['user_id']
@@ -106,7 +105,7 @@ def dashboard():
 				return render_template("dashboard.html", name = session['name'], upcoming_joined_events = upcoming_joined_events, past_joined_events = past_joined_events, events_not_yet_joined = upcoming_events)
 			else:
 				mysql = connectToMySQL()
-				event = "SELECT users.name as names, events.event_name as event_name, events.max_attendees as max_attendees, events.date as event_date, events.id as event_id FROM events LEFT JOIN users ON users.id = events.user_id;"
+				event = "SELECT users.name as names, events.name as event_name, events.max_attendees as max_attendees, events.date as event_date, events.id as event_id FROM events LEFT JOIN users ON users.id = events.user;"
 				events_not_yet_joined = mysql.query_db(event)
 				upcoming_events = []
 				count = 0
@@ -203,7 +202,7 @@ def createEvent():
 
 
 			mysql = connectToMySQL()
-			query = "INSERT INTO events (user_id, event_name, date, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(date)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
+			query = "INSERT INTO events (user, name, date, location, description, max_attendees, created_at) VALUES (%(user_id)s, %(eventname)s, %(date)s, %(location)s, %(description)s, %(max_attendees)s,NOW());"
 			data = {
 				"user_id": session['user_id'],
 				"eventname": request.form['name'],
@@ -233,9 +232,9 @@ def joinEvent():
 		"event_id":request.form['event_id'],
 	}
 	event = mysql.query_db(query, data)
-
+	print(event)
 	mysql = connectToMySQL()
-	query = "INSERT INTO joins (user_id, event_id, created_at) VALUES (%(id)s, %(event_id)s, NOW());"
+	query = "INSERT INTO joins (user, event, created_at) VALUES (%(id)s, %(event_id)s, NOW());"
 	data = {
 		"id": session['user_id'],
 		"event_id":event[0]['id']

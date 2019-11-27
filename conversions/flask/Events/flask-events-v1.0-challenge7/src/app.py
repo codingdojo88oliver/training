@@ -54,10 +54,10 @@ def dashboard():
 				flash("Invalid session")
 				return redirect("/")
 			mysql = connectToMySQL()
-			query = "SELECT events.id as event_id, events.user_id as user_id, users.name as name, events.date as event_date, events.event_name as event_name FROM events left join users on events.user_id = users.id;"
+			query = "SELECT * FROM events;"
 			upcoming_events = mysql.query_db(query)
-			print(upcoming_events)
-			return render_template("/dashboard.html", user = user, upcoming_events = upcoming_events)
+			
+			return render_template("/dashboard.html", user_id = user[0]['id'], upcoming_events = upcoming_events)
 		else:
 			flash("User is not logged in")
 			return redirect("/")
@@ -123,7 +123,7 @@ def hostEvent():
 		flash("Something went wrong.")
 		return redirect("/dashboard")
 
-	return render_template("host-event.html", user = user,name = session['name'])
+	return render_template("host-event.html", user = user, name = session['name'])
 
 
 @app.route('/create-event', methods=['POST'])
@@ -199,21 +199,6 @@ def joinEvent():
 	flash("You just joined an event!")
 	return redirect('/dashboard')
 
-@app.route('/unjoin-event', methods=['POST'])
-def unjoinEvent():
-	try:
-		mysql = connectToMySQL()
-		query = "SELECT * FROM users WHERE id = %(id)s LIMIT 1;"
-		data = {
-			"id": session['user_id']
-		}
-		user = mysql.query_db(query, data)
-	except Exception as e:
-		flash("User is not logged in")
-		return redirect("/")
-	flash("You just Unjoined an event!")
-	return redirect('/dashboard')
-
 @app.route('/logout', methods=['GET'])
 def logout():
 	session.clear()
@@ -230,3 +215,5 @@ def reset():
 
 if __name__ == "__main__":
 	app.run(port=8000, debug=True)
+
+
