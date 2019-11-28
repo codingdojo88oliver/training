@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Hello, {{user.name}}!</h1>
+        <a href="logout" class="logout">Logout</a>
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-danger" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}  
+        <form method="post" action="/create-topic">
+            {% csrf_token %}
+            <label for="title">Topic: </label>
+            <input type="text" name="title" id="title" placeholder="ex. Chicken or Egg?">          
+            <label for="description">Description: </label>
+            <textarea name="description" rows="5"></textarea>
+            <button type="submit">Post</button>
+        </form>
+        <h5>Debate topics created by other users:</h5>
+        <table class="table other-topics">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Date Created</th>
+                    <th>Arguments</th>
+                </tr>
+            </thead>
+            {% if fresh_topics %}
+            <tbody>
+                {% for fresh_topic in fresh_topics %}
+                <tr>
+                    <td><a class="fresh-topic" href="/topics/{{ fresh_topic.id  }}">{{ fresh_topic.title }}</a></td>
+                    <td>{{ fresh_topic.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table> 
+        <h5>Debate topics I created:</h5>
+        <table class="table my-topics">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Date Created</th>
+                </tr>
+            </thead>
+            {% if my_topics %}
+            <tbody>
+                {% for my_topic in my_topics %}
+                <tr>
+                    <td><a class="my-topic" href="/topics/{{ my_topic.id  }}">{{ my_topic.title }}</a></td>
+                    <td>{{ my_topic.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table> 
+    </div>
+{% endblock content %}

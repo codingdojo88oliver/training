@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app: 
+    build: .
+    volumes:
+      - .:/pythonapp/challenge_1
+    ports:
+      - "8001:8000"
+    command: python main/manage.py runserver 0.0.0.0:8000
