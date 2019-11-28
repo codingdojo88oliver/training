@@ -37,12 +37,36 @@ def register():
 			}
 			user = mysql.query_db(query, data)
 
-			session['is_logged_in'] = True
-			session['name'] = request.form['name']
-			session['user_id'] = user
+			flash( "User " + request.form['name'] + " with username " + request.form['username'] + " successfully registered!")
 
 			return redirect("/dashboard")
 
+@app.route('/login', methods=['post'])
+def login():
+	mysql = connectToMySQL()
+	query = "SELECT * FROM users WHERE username = %(username)s LIMIT 1;"
+	data = {
+			"username": request.form['username']
+	}
+	username = mysql.query_db(query, data)
+
+	if username:
+		try:
+			mysql = connectToMySQL()
+			query = "SELECT * FROM users WHERE username = %(username)s and  password = %(password)s;"
+			data = {
+					"username": request.form['username'],
+					"password": request.form['password'],
+			}
+			user = mysql.query_db(query, data)
+			flash("Invalid username and password combination")
+			return redirect("/")
+		except Exception as e:
+			flash("Invalid username and password combination")
+			return redirect("/")
+	else:
+		flash(request, "Username does not exist in the database")
+		return redirect("/")
 
 @app.route("/dashboard", methods = ["GET"])
 def dashboard():

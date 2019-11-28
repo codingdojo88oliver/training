@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Qoutes</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, {{ user[0]['name'] }}!</h1>
+	   <a href="/logout" class="logout">Logout</a>
+        <h5>This will be a portal where we can encourage each other with quotes that have inspired you</h5>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %}
+    </div>
+    
+</body>
+</html>
+

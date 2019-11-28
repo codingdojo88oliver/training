@@ -37,12 +37,20 @@ def register():
 			}
 			user = mysql.query_db(query, data)
 
-			session['is_logged_in'] = True
-			session['name'] = request.form['name']
-			session['user_id'] = user
+			flash( "User " + request.form['name'] + " with username " + request.form['username'] + " successfully registered!")
 
 			return redirect("/dashboard")
 
+@app.route('/login', methods=['post'])
+def login():
+	try:
+		session['is_logged_in'] = True
+		session['name'] = request.form['username']
+		session['user_id'] = 1
+		return redirect("/dashboard")
+	except Exception as e:
+		flash("Invalid username and password combination")
+		return redirect("/")
 
 @app.route("/dashboard", methods = ["GET"])
 def dashboard():

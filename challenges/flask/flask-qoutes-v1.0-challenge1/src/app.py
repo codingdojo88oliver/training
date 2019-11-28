@@ -17,8 +17,6 @@ def register():
 		try:
 			if  len(request.form['name']) < 5:
 				flash("Name should be at least 5 characters")
-			if  len(request.form['username']) < 5:
-				flash("Username should be at least 5 characters")
 			if len(request.form['password']) < 8:
 				flash("Password should be at least 8 characters")
 			if request.form['password'] != request.form['c_password']:
@@ -29,19 +27,15 @@ def register():
 			return redirect('/')
 		else:
 			mysql = connectToMySQL()
-			query = "INSERT INTO users (name, username, password,created_at) VALUES (%(name)s, %(username)s, %(password)s,NOW());"
+			query = "INSERT INTO users (name, email, password,created_at) VALUES (%(name)s, %(email)s, %(password)s,NOW());"
 			data = {
 				"name": request.form['name'],
-				"username": request.form['username'],
+				"email": request.form['email'],
 				"password": request.form['password'],
 			}
-			user = mysql.query_db(query, data)
-
-			session['is_logged_in'] = True
-			session['name'] = request.form['name']
-			session['user_id'] = user
-
-			return redirect("/dashboard")
+			mysql.query_db(query, data)
+			flash("User " + request.form['name'] + " with email " + request.form['email'] + " successfully registered!")
+			return redirect("/")
 
 
 @app.route("/dashboard", methods = ["GET"])
@@ -59,7 +53,7 @@ def dashboard():
 			except Exception as e:
 				flash("Invalid session")
 				return redirect("/")
-			return render_template("dashboard.html", user = user)
+			return render_template("dashboard.html", name = session['name'], email = session['email'])
 		else:
 			flash("User is not logged in")
 			return redirect("/")
@@ -67,6 +61,24 @@ def dashboard():
 		flash("User is not logged in")
 		return redirect("/")
 
+@app.route("/login", methods = ["POST"])
+def login():
+	mysql = connectToMySQL()
+	query = "SELECT * FROM users WHERE email = %(email)s LIMIT 1;"
+	data = {
+		"email": request.form['email'],
+	}
+	user = mysql.query_db(query, data)
+	if user:
+		try:
+			flash("Invalid email and password combination")
+			return redirect("/")
+		except Exception as e:
+			flash("Invalid email and password combination")
+			return redirect("/")
+	else:
+		flash( "Email does not exist in the database")
+		return redirect("/")
 @app.route('/logout', methods=['GET'])
 def logout():
 	session.clear()
@@ -76,7 +88,7 @@ def logout():
 def reset():
 	mysql = connectToMySQL()
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
-	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("DELETE FROM users WHERE username in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
 
 	return redirect('/')
