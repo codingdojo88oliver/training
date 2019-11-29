@@ -58,7 +58,7 @@
                         <td>Posted By: <span>{{ favorite_quote['name'] }}</span></td>
                         <td>
                             <form method="POST" action="remove-from-favorites">
-                                <input class="favorite_id" type="hidden" name="favorite_id" value="{{ favorite_quote['id'] }}">
+                                <input class="favorite_id" type="hidden" name="favorite_id" value="{{ favorite_quote['favorites_id'] }}">
                                 <button type="submit">Remove from list</button>
                             </form>
                         </td>

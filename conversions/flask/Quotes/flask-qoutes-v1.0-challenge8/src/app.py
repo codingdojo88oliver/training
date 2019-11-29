@@ -76,7 +76,7 @@ def dashboard():
 				return redirect("/")
 			
 			mysql = connectToMySQL()
-			query = "SELECT favorites.id, users.name, quotes.quoted_by, quotes.quote, favorites.user, favorites.quote as quote_id FROM  favorites left join  users on favorites.user =  users.id left join  quotes on favorites.quote =  quotes.id WHERE users.id = %(id)s;" 
+			query = "SELECT favorites.id as favorites_id, users.name, quotes.quoted_by, quotes.quote, favorites.user_id, favorites.quote_id as quote_id FROM  users left join  quotes on quotes.user_id =  users.id left join  favorites on favorites.quote_id =  quotes.id WHERE favorites.user_id = %(id)s ;" 
 			favorite_quotes = mysql.query_db(query,data)
 			# get all quotes except favorites
 			except_quote_ids = []
@@ -85,7 +85,7 @@ def dashboard():
 					except_quote_ids.append(favorite_quote['quote_id'])
 
 				mysql = connectToMySQL()
-				query = "SELECT quotes.quoted_by, quotes.quote, quotes.user, users.name, users.id FROM  quotes left join  users on users.id =  quotes.user WHERE quotes.id NOT IN %(except_quote_ids)s;" 
+				query = "SELECT quotes.quoted_by, quotes.quote, quotes.user_id, users.name, quotes.id FROM  quotes left join  users on users.id =  quotes.user_id WHERE quotes.id NOT IN %(except_quote_ids)s;" 
 				data = {
 						"except_quote_ids": except_quote_ids,
 					}
@@ -94,7 +94,7 @@ def dashboard():
 				return render_template("dashboard.html", user = user, quotes = quotes, favorite_quotes = favorite_quotes)
 			else:
 				mysql = connectToMySQL()
-				query = "SELECT * FROM  quotes left join  users on users.id =  quotes.user;" 
+				query = "SELECT * FROM  quotes left join  users on users.id =  quotes.user_id;" 
 				quotes = mysql.query_db(query)
 
 				return render_template("dashboard.html", user = user, user_id = session['user_id'], quotes = quotes, favorite_quotes = favorite_quotes)
@@ -131,9 +131,9 @@ def createQuote():
 				return redirect("/")
 
 			mysql = connectToMySQL()
-			query = "INSERT INTO quotes (user, quoted_by, quote,created_at) VALUES (%(user)s, %(quoted_by)s, %(quote)s,NOW());"
+			query = "INSERT INTO quotes (user_id, quoted_by, quote,created_at) VALUES (%(user_id)s, %(quoted_by)s, %(quote)s,NOW());"
 			data = {
-				"user": user[0]['id'],
+				"user_id": user[0]['id'],
 				"quoted_by": request.form['quoted_by'],
 				"quote": request.form['quote'],
 			}
@@ -161,7 +161,7 @@ def moveToFavorites():
 	quote = mysql.query_db(query, data)
 
 	mysql = connectToMySQL()
-	query = "INSERT INTO favorites (user, quote, created_at) VALUES (%(user_id)s, %(quote_id)s,NOW());"
+	query = "INSERT INTO favorites (user_id, quote_id, created_at) VALUES (%(user_id)s, %(quote_id)s,NOW());"
 	data = {
 		"quote_id": request.form['quote_id'],
 		"user_id": session['user_id'],
@@ -225,7 +225,7 @@ def logout():
 def reset():
 	mysql = connectToMySQL()
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
-	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("DELETE FROM users WHERE username in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
 
 	return redirect('/')

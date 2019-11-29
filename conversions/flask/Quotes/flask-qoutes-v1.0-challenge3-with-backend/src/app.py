@@ -43,14 +43,6 @@ def register():
 
 @app.route('/login', methods=['post'])
 def login():
-	mysql = connectToMySQL()
-	query = "SELECT * FROM users WHERE username = %(username)s LIMIT 1;"
-	data = {
-			"username": request.form['username']
-	}
-	username = mysql.query_db(query, data)
-
-	if username:
 		try:
 			mysql = connectToMySQL()
 			query = "SELECT * FROM users WHERE username = %(username)s and  password = %(password)s;"
@@ -66,9 +58,6 @@ def login():
 		except Exception as e:
 			flash("Invalid username and password combination")
 			return redirect("/")
-	else:
-		flash(request, "Username does not exist in the database")
-		return redirect("/")
 
 @app.route("/dashboard", methods = ["GET"])
 def dashboard():
@@ -87,7 +76,7 @@ def dashboard():
 				return redirect("/")
 			
 			mysql = connectToMySQL()
-			query = "SELECT * FROM quotes;"
+			query = "SELECT * FROM quotes left join users on users.id = quotes.user_id;"
 			quotes = mysql.query_db(query)
 			return render_template("dashboard.html", user = user, quotes = quotes)
 		else:
@@ -123,9 +112,9 @@ def createQuote():
 				return redirect("/")
 
 			mysql = connectToMySQL()
-			query = "INSERT INTO quotes (user, quoted_by, quote,created_at) VALUES (%(user)s, %(quoted_by)s, %(quote)s,NOW());"
+			query = "INSERT INTO quotes (user_id, quoted_by, quote,created_at) VALUES (%(user_id)s, %(quoted_by)s, %(quote)s,NOW());"
 			data = {
-				"user": user[0]['id'],
+				"user_id": user[0]['id'],
 				"quoted_by": request.form['quoted_by'],
 				"quote": request.form['quote'],
 			}
@@ -142,7 +131,7 @@ def logout():
 def reset():
 	mysql = connectToMySQL()
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 0;")
-	mysql.query_db("DELETE FROM users WHERE email in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
+	mysql.query_db("DELETE FROM users WHERE username in('mally5@yahoo.com', 'brian@gmail.com', 'james@gmail.com');")
 	mysql.query_db("SET FOREIGN_KEY_CHECKS = 1;")
 
 	return redirect('/')
