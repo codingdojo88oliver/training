@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, {{ user[0]['name'] }}!</h1>
+	   	<a href="logout" class="logout">Logout</a>
+	   	 {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %} 
+        <form method="POST" action="/create-topic">
+            <label for="title">Topic: </label>
+            <input type="text" name="title" id="title" placeholder="ex. Chicken or Egg?">          
+            <label for="description">Description: </label>
+            <textarea name="description" rows="5"></textarea>
+            <button type="submit">Post</button>
+        </form>
+        <h5>Debate topics created by other users:</h5>
+        <table class="table other-topics">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Date Created</th>
+                    <th>Arguments</th>
+                    
+                </tr>
+            </thead>
+            {% if fresh_topics %}
+            <tbody>
+                {% for fresh_topic in fresh_topics %}
+                <tr>
+
+                    <td><a class="fresh-topic" href="/topics/{{ fresh_topic['id']  }}">{{ fresh_topic['title'] }}</a></td>
+                    <td>{{ fresh_topic['created_at'].strftime('%m-%d-%Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+        <h5>Debate topics I created:</h5>
+        <table class="table my-topics">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Date Created</th>
+                    <th>Arguments</th>
+                   
+                </tr>
+            </thead>
+            {% if my_topics %}
+            <tbody>
+                {% for my_topic in my_topics %}
+                <tr>
+                    <td><a class="my-topic" href="/topics/{{ my_topic['id']  }}">{{ my_topic['title'] }}</a></td>
+                    <td>{{ my_topic['created_at'].strftime('%m-%d-%Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+    
+</body>
+</html>
+

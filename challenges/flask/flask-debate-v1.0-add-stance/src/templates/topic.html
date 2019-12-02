@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>{{ topic[0]['title'] }} <small>by {{ topic[0]['name'] }}</small></h1>
+        <a href="" class="logout">Logout</a>
+        <p>{{ topic[0]['description'] }}</p>
+        <div class="container">
+            <h4>Agree</h4>
+            <p class="agree-points-total">Current Points: {{ agree_points_total }}</p>
+            {% if arguments %}
+                {% for argument in arguments %}
+                    {% if argument['stance'] == "agree" %}            
+                        <div class="agree_item">
+                            <p>{{ argument['argument'] }}</p>
+                            <p class="user">by <a href="/upvote/{{ argument['user_id'] }}">{{ argument['name'] }}</a></p>
+                            <a href="" class="agree-points">{{ argument['point'] }} points </a>  
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+         <div class="container">
+            <h4>Neutral</h4>
+            <p class="neutral-points-total">Current Points: {{ neutral_points_total }}</p>
+            {% if arguments %}
+                {% for argument in arguments %}
+                    {% if argument['stance'] == "neutral" %}       
+                        <div class="neutral_item">
+                            <p>{{ argument['argument'] }}</p>
+                           <p class="user">by <a href="/upvote/{{ argument['user_id'] }}">{{ argument['name'] }}</a></p>
+                            <a href="" class="neutral-points">{{ argument['point'] }} points </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+         <div class="container">
+            <h4>Disagree</h4>
+            <p class="disagree-points-total">Current Points: {{ disagree_points_total }}</p>
+            {% if arguments %}
+                {% for argument in arguments %}
+                    {% if argument['stance'] == "disagree" %}  
+                        <div class="disagree_item">
+                            <p>{{ argument['argument'] }}</p>
+                           <p class="user">by <a href="/upvote/{{ argument['user_id'] }}">{{ argument['name'] }}</a></p>
+                            <a href="" class="disagree-points">{{ argument['point'] }} points </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>
+         {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %} 
+        <form method="post" action="/create-argument">
+            <input type="hidden" name="topic_id" value="{{ topic[0]['id'] }}">
+            <span>I</span>
+            <select name="stance">
+                <option value="agree">Agree</option>
+                <option value="neutral">Neutral</option>
+                <option value="disagree">Disagree</option>
+            </select>
+            <span>because:</span>
+            <textarea name="argument" rows="5"></textarea>         
+            <button type="submit">Post</button>
+        </form>
+    </div>
+    
+</body>
+</html>
+
