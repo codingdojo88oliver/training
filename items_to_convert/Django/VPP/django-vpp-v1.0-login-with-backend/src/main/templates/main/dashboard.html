@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Hello, {{ user.name }}!</h1>
+    <p>You have successfully registered / logged in!</p>
+    <p>Here are the information you entered: </p>
+    <p>Email: {{ user.email }}</p>
+    <p>Country: {{ user.country }}</p>
+    <p>Interests: 
+    {% if user.interests %}
+        {% for interest in user.interests.all %}
+            <strong>{{ interest.interest }} {% if not forloop.last %}, {% endif %}</strong>
+        {% endfor %}
+    {% endif %}
+    </p>
+    <p>Languages: 
+    {% if user.languages %}
+        {% for language in user.languages.all %}
+            <strong>{{ language.language }} {% if not forloop.last %}, {% endif %}</strong>
+        {% endfor %}
+    {% endif %}
+    </p>
+</div>
+{% endblock content %}

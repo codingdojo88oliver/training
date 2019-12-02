@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+	<p>From: {{ plane.user.country }}</p>
+	<p>{{ plane.message }}</p>
+	<p><a href="/dashboard">Dashboard</a></p>
+</div>
+{% endblock content %}

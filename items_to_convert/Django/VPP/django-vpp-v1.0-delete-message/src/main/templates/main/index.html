@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+	<h1>Welcome!</h1>
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert-danger" role="alert">{{ message }}</div>
+		{% endfor %}
+	{% endif %}	
+	<form method="post" action="/register">
+		{% csrf_token %}
+		<h5>Register</h5>
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" placeholder="ex. John">		
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" placeholder="ex. azam@bagatov.com">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+		<label for="c_password">Confirm Password</label>
+		<input type="password" name="c_password" id="c_password">
+		<label for="country">Country</label>
+		<select name="country">
+			<option value="United States">United States</option>
+			<option value="China">China</option>
+			<option value="Japan">Japan</option>
+			<option value="South Korea">South Korea</option>
+			<option value="United Kingdom">United Kingdom</option>
+			<option value="Egypt">Egypt</option>
+		</select>
+		<button type="submit">Register</button>
+	</form>
+	<form method="post" id="login_form" action="/login">
+		{% csrf_token %}
+		<h5>Login</h5>
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+		<button type="submit">Login</button>
+	</form>	
+</div>
+
+{% endblock content %}

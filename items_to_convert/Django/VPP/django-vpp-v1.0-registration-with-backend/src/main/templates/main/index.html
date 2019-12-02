@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome!</h1>
+<div class="container">
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert-danger" role="alert">{{ message }}</div>
+		{% endfor %}
+	{% endif %}	
+	<form method="post" action="/register">
+		{% csrf_token %}
+		<h5>Register</h5>
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" placeholder="ex. Brian">		
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" placeholder="ex. brian@datacompass.com">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+		<label for="c_password">Confirm Password</label>
+		<input type="password" name="c_password" id="c_password">
+		<label for="country">Country</label>
+		<select name="country">
+			<option value="United States">United States</option>
+			<option value="China">China</option>
+			<option value="Japan">Japan</option>
+			<option value="South Korea">South Korea</option>
+			<option value="United Kingdom">United Kingdom</option>
+			<option value="Egypt">Egypt</option>
+		</select>
+		<div class="checkbox_container">
+			<label>Interests:</label>
+			<div class="row">
+				<input name="interests" type="checkbox" value="sports" id="sports">
+				<label for="sports">Sports</label>
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="memes" value="memes">
+				<label for="memes">Memes</label> 	
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="movies" value="movies">	
+				<label for="movies">Movies</label>
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="video_games" value="Video Games">
+				<label for="video_games">Video Games</label>
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="beach" value="Beach">	
+				<label for="beach">Beach</label>	
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="cooking" value="Cooking">
+				<label for="cooking">Cooking</label>
+			</div>
+			<div class="row">
+				<input name="interests" type="checkbox" id="crochet" value="Crochet">
+				<label for="crochet">Crochet</label>
+			</div>
+		</div>
+		<div class="checkbox_container">
+			<label>Language:</label>
+			<div class="row">
+				<input name="language" type="checkbox" value="mandarin" id="mandarin">
+				<label for="mandarin">Mandarin</label>
+			</div>
+			<div class="row">
+				<input name="language" type="checkbox" value="english" id="english">
+				<label for="english">English</label>
+			</div>
+			<div class="row">
+				<input name="language" type="checkbox" value="french" id="french">
+				<label for="french">French</label>	
+			</div>
+			<div class="row">
+				<input name="language" type="checkbox" value="spanish" id="spanish">
+				<label for="spanish">Spanish</label>
+			</div>
+			<div class="row">
+				<input name="language" type="checkbox" value="italian" id="italian">
+				<label for="italian">Italian</label>		  		
+			</div>
+		</div>
+		<button type="submit">Register</button>
+	</form>
+</div>
+
+{% endblock content %}
