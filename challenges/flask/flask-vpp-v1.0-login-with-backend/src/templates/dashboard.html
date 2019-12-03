@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+   	<div class="container">
+	    <h1>Hello, {{ users[0]['name'] }}!</h1>
+	    <p>You have successfully registered / logged in!</p>
+	    <p>Here are the information you entered: </p>
+	    <p>Email: {{ users[0]['email'] }}</p>
+	    <p>Country: {{ users[0]['country'] }}</p>
+	    <p>Interests: 
+		{% if users[0]['interest'] %}
+			<strong>{{  users[0]['interest'] }} 
+		{% endif %}
+	    </p>
+	    <p>Languages: 
+		{% if users[0]['language'] %}
+			<strong>{{ users[0]['language'] }} </strong>
+		{% endif %}
+	    </p>
+	</div>
+    
+</body>
+</html>
+

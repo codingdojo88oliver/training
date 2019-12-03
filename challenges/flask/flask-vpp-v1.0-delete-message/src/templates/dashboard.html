@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+   	<div class="container">
+        <h1>Hello, {{user[0]['name']}}!</h1>
+        <a href="/logout" class="logout">Logout</a>
+       {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %}
+        <h5>Virtual planes landed in your location:</h5>
+        <table class="table" id="messages-received">
+            <thead>
+                <tr>
+                    <th>Plane ID</th>
+                    <th>Time Arrived</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><a class="received-plane" href="">06:42:08 Aug 08, 2019</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <h5>My Planes:</h5>
+       <table class="table">
+            <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+             <tbody>
+                <tr>
+                    <td>
+                        <strong>1</strong>
+                    </td>
+                    <td><a class="my-plane" href="">06:42:08 Aug 08, 2019</a></td>
+                    <td>Ready</td>
+                    <td>
+                        <form method="POST" action="/delete-plane">
+                            <input class="delete_plane_id" type="hidden" name="plane_id" value="">
+                            <button class="btn btn-link">Delete</button>
+                        </form>                      
+                    </td>
+                </tr>
+            </tbody>
+        </table>  
+        <form method="post" action="/create-plane" class='textarea-form'>
+            <h5>Write your message:</h5>
+            <textarea class="form-control" name="message"></textarea>
+            <button type="submit" class="btn btn-primary float-right">Create Paper Plane</button>
+        </form>                   
+    </div>
+    
+</body>
+</html>
+
