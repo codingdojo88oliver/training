@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome!</h1>
+<div class="container">
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-danger" role="alert">
+			{{ message }}
+		</div>
+		{% endfor %}
+	{% endif %}	
+	<form method="post" action="/register">
+		{% csrf_token %}
+		<h5>Register</h5>
+		<label for="first-name">First Name</label>
+		<input type="text" name="first_name" id="first-name" placeholder="ex. John">		
+		<label for="last-name">Last Name</label>	
+		<input type="text" name="last_name" id="last-name" placeholder="ex. Doe">			
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" placeholder="ex. johndoe@datacompass.com">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">	
+		<label for="c_password">Confirm Password</label>
+		<input type="password" name="c_password" id="c_password">
+		<button type="submit">Register</button>
+	</form>
+	<form method="post" action="/login">
+		 {% csrf_token %}
+		<h5>Login</h5>
+		<label for="email">Email</label>
+		<input type="email" name="email" id="email" placeholder="ex. johndoe@datacompass.com">
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password">
+		<button type="submit">Login</button>
+	</form>				
+</div>
+{% endblock content %}

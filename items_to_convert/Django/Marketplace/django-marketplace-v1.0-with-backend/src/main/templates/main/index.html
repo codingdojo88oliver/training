@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome!</h1>
+<div class="container">
+	<div class="row">
+		<h5>Register</h5>
+	</div>
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-danger" role="alert">
+			{{ message }}
+		</div>
+		{% endfor %}
+	{% endif %}	
+	<div class="row">
+		<div class="col-sm">
+			<form method="post" action="/register">
+				{% csrf_token %}
+				<div class="form-group row">
+					<label for="first-name" class="col-sm-5 col-form-label">First Name</label>
+					<div class="col-sm-7">
+						<input type="text" name="first_name" class="form-control" id="first-name" placeholder="ex. John">
+					</div>
+				</div>		
+				<div class="form-group row">
+					<label for="last-name" class="col-sm-5 col-form-label">Last Name</label>
+					<div class="col-sm-7">
+						<input type="text" name="last_name" class="form-control" id="last-name" placeholder="ex. Doe">
+					</div>
+				</div>			
+				<div class="form-group row">
+					<label for="email" class="col-sm-5 col-form-label">Email</label>
+					<div class="col-sm-7">
+						<input type="email" name="email" class="form-control form-control-sm" id="email" placeholder="ex. azam@bagatov.com">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="password" class="col-sm-5 col-form-label">Password</label>
+					<div class="col-sm-7">
+						<input type="password" name="password" class="form-control form-control-sm" id="password">
+					</div>
+				</div>	
+				<div class="form-group row">
+					<label for="c_password" class="col-sm-5 col-form-label">Confirm Password</label>
+					<div class="col-sm-7">
+						<input type="password" name="c_password" class="form-control" id="c_password">
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary float-right">Register</button>
+			</form>
+		</div>
+		<div class="col-sm">
+			<form method="post" action="/login">
+				{% csrf_token %}	
+				<div class="form-group row">
+					<label for="email" class="col-sm-5 col-form-label">Email</label>
+					<div class="col-sm-7">
+						<input type="email" name="email" class="form-control form-control-sm" id="email" placeholder="ex. azam@bagatov.com">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="password" class="col-sm-5 col-form-label">Password</label>
+					<div class="col-sm-7">
+						<input type="password" name="password" class="form-control form-control-sm" id="password">
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary float-right">Login</button>
+			</form>				
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

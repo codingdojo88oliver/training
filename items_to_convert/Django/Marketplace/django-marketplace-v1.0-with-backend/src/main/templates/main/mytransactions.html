@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>Create Advertisement</h3>
+            <form method="POST" action="/create-product">
+              {% csrf_token %}
+              <div class="form-group row">
+                <label for="name" class="col-sm-2 col-form-label">Product Name:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="name" name="name" placeholder="ex. Product Name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="category" class="col-sm-2 col-form-label">Category:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" id="category" name="category">
+                        {% if categories %}
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                  <label for="price" class="col-sm-2 col-form-label">Price:</label>
+                  <div class="input-group mb-2 col-sm-10">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">$</div>
+                    </div>
+                    <input type="number" class="form-control" id="price" placeholder="40.00" name="price">
+                  </div>
+              </div>
+              <div class="form-group row">
+                <label for="description" class="col-sm-2 col-form-label">Description:</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  <button type="submit" class="btn btn-primary float-right">Submit</button>
+                </div>
+              </div>
+            </form>    
+        </div>
+        <div class="col">
+            <div class="float-right">
+                <a href="/dashboard" class="btn btn-link mr-sm-2">Dashboard</a>
+                <a href="/logout" class="btn btn-link my-2 my-sm-0">Logout</a>      
+            </div>            
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col">
+            {% if items_sold %}
+            <h4>Items Sold</h4>
+            <ul class="list-group list-group-flush items_sold">
+                {% for item_sold in items_sold %}
+                    <li class="list-group-item">
+                        <p>
+                            <a href="">{{ item_sold.product.name }}</a> 
+                            <span class="float-right">${{item_sold.price}}</span>
+                        </p>
+                        <p>Bought by {{ item_sold.buyer.first_name }} {{ item_sold.buyer.last_name|slice:"1" }}.</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <br><br>
+            {% endif %}
+
+            {% if items_bought %}
+            <h4>Items Bought</h4>
+            <ul class="list-group list-group-flush items_bought">
+                {% for item_bought in items_bought %}
+                    <li class="list-group-item">
+                        <p>
+                            <a href="">{{ item_bought.product.name }}</a>
+                            <span class="float-right">${{ item_bought.price }}</span>
+                        </p>
+                        <p>
+                            Posted By {{ item_bought.product.user.first_name }} {{ item_bought.product.user.last_name|slice:"1" }}.
+                            {% if item_bought.price != item_bought.product.price %}
+                                <span class="float-right">(was ${{ item_bought.product.price }})</span>
+                            {% endif %}
+                        </p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <br><br>
+            {% endif %}
+
+            {% if negotiations %}
+                <h4>Items under negotiation</h4>
+                <ul class="list-group list-group-flush under_negotiations">
+                {% for negotiation in negotiations %}
+                    {% if negotiation.negotiator_id == user.id %}
+                    {% if negotiation.product.status != "Sold" %}
+                    <li class="list-group-item">
+                        <p>
+                            <a href="">{{ negotiation.product.name }}</a> 
+                            <span class="float-right">Selling price: ${{negotiation.product.price}}</span>
+                        </p>
+                        <p>
+                            Posted by {{negotiation.product.user.first_name}} {{ negotiation.product.user.last_name|slice:"1" }}.
+                            <span class="float-right">Your asking price: ${{negotiation.price}}</span>
+                        </p>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if negotiation.negotiator_id != user.id %}
+                    {% if negotiation.product.status != "Sold" %}
+                    <li class="list-group-item">
+                        <p>
+                            <a href="">{{ negotiation.product.name }}</a> 
+                            <span class="float-right">Your selling price: ${{negotiation.product.price}}</span>
+                        </p>
+                        <p>
+                            Buyer: {{negotiation.negotiator.first_name}} {{ negotiation.negotiator.last_name|slice:"1" }}.
+                            <span class="float-right">Asking price: ${{negotiation.price}}</span>
+                        </p>
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-sm-1">
+                                <form method="POST" action="/approve" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="negotiation_id" value="{{ negotiation.id }}">
+                                    <button type="submit" class="approve btn btn-primary mb-2">Approve</button>
+                                </form>
+                            </div>
+                            <div class="col-sm-1">
+                                <form method="POST" action="/dismiss" class="form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="negotiation_id" value="{{ negotiation.id }}">
+                                    <button type="submit" class="dismiss btn btn-primary mb-2">Dismiss</button>
+                                </form>  
+                            </div>
+                          </div>
+                        </div>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            {% endif %}        
+        </div>  
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}    
+</div>
+{% endblock content %}

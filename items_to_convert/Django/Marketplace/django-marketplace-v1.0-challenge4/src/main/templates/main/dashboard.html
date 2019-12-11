@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Hi, {{ user.first_name }}! Welcome to the Marketplace.</h1>
+    <a href="/add-product" class="my_transactions">Add Products</a>
+    <a href="/logout" class="logout">Logout</a>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <div class="container" id="my-products">
+        <h3>Items I'm Selling:</h3>
+        {% if categories %}
+            {% for category in categories %}
+                <h4>{{ category }}</h4>
+                {% if products %}
+                    <ul>
+                    {% for product in products %}
+                        {% if product.category == category %}
+                            {% if product.status == "Available" %}
+                                {% if product.user_id == user.id %}
+                                <li>
+                                    <p><a class="product" href="">{{ product.name }}</a> <span>${{product.price}}</span></p>
+                                    <p>
+                                        <form method="post" action="remove-product">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                                            <button type="submit">Remove</button>
+                                        </form>
+                                    </p>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="container" id="other-products">
+        <h3>Products for Sale:</h3>
+        {% if categories %}
+            {% for category in categories %}
+                <h4>{{ category }}</h4>
+                {% if products %}
+                    <ul>
+                    {% for product in products %}
+                        {% if product.category == category %}
+                            {% if product.status == "Available" %}
+                                {% if product.user_id != user.id %}
+                                <li>
+                                    <p><a class="product" href="">{{ product.name }}</a> <span>${{product.price}}</span></p>
+                                    <p>Posted by {{ product.user.first_name }} {{ product.user.last_name|slice:"1" }}.</p>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>Hi, {{ user.first_name }}! Welcome to the Marketplace.</h3>      
+        </div>
+        <div class="col">
+            <div class="float-right">
+                <a href="/mytransactions" class="btn btn-link mr-sm-2">My Transactions</a>
+                <a href="/logout" class="btn btn-link my-2 my-sm-0">Logout</a>      
+            </div>            
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col">
+
+            {% if categories %}
+                {% for category in categories %}
+                    <h4>{{ category.name }}</h4>
+                    {% if products %}
+                        <ul class="list-group list-group-flush">
+                        {% for product in products %}
+                            {% if product.category_id == category.id %}
+                            {% if product.status == "Available" %}
+                                <li class="list-group-item">
+                                    <p><a class="product" href="/products/{{ product.id }}">{{ product.name }}</a> <span class="float-right">${{product.price}}</span></p>
+                                    <p>Posted by {{ product.user.first_name }} {{ product.user.last_name|slice:"1" }}.</p>
+                                </li>
+                            {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                        <br><br>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </div>  
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}    
+</div>
+{% endblock content %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Hi, {{ user.first_name }}! Welcome to the Marketplace.</h1>
+    <a href="/add-product" class="my_transactions">Add Products</a>
+    <a href="/logout" class="logout">Logout</a>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <div class="container" id="my-products">
+        <h3>Items I'm Selling:</h3>
+        {% if categories %}
+            <h4>Arts & Crafts</h4>
+            <ul>
+                <li>
+                    <p><a class="product" href="/products/1">Some test Product</a><span>$100</span></p>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+    <div class="container" id="other-products">
+        <h3>Products for Sale:</h3>
+        {% if categories %}
+            <h4>Computer Accessories</h4>
+            <ul>
+                <li>
+                    <p><a class="product" href="/products/1">Some test Product</a><span>$100</span></p>
+                    <p>Posted by {{ product.user.first_name }} {{ product.user.last_name|slice:"1" }}.</p>
+                </li>
+            </ul>
+        {% endif %} 
+    </div>
+</div>
+{% endblock content %}

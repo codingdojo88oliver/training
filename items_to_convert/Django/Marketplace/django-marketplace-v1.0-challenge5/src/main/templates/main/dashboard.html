@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Hi, {{ user.first_name }}! Welcome to the Marketplace.</h1>
+    <a href="/add-product" class="my_transactions">Add Products</a>
+    <a href="/logout" class="logout">Logout</a>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <div class="container" id="my-products">
+        <h3>Items I'm Selling:</h3>
+        <h4>Category Name</h4>
+        <ul>
+            <li>
+                <p><a class="product" href="">Product Name</a> <span>$200</span></p>
+            </li>
+
+        </ul>
+    </div>
+    <div class="container" id="other-products">
+        <h3>Products for Sale:</h3>
+        <h4>Category Name</h4>
+        <ul>
+            <li>
+                <p><a class="product" href="">Product Name</a> <span>$100</span></p>
+                <p>Posted by Oliver R.</p>
+                <p>
+                    <form method="post" action="buy">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="">
+                        <button type="submit">Buy</button>
+                    </form>
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="container" id="bought-products">
+        <h3>Items Bought:</h3>
+        <h4>Category Name</h4>
+        <ul class="items_bought">
+            <li>
+                <p>
+                    <a href="">Product Name</a>
+                    <span>$300</span>
+                </p>
+                <p>
+                    Posted By Oliver R.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock content %}
