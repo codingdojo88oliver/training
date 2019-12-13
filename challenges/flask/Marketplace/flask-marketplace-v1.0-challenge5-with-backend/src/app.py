@@ -91,7 +91,7 @@ def dashboard():
 			
 			#get user's items bought
 			mysql = connectToMySQL()
-			query = "SELECT transactions.id, products.id, products.category, products.name, products.price FROM transactions left join products on products.id = transactions.product_id left join users on users.id = products.user_id WHERE buyer_id = %(id)s;"
+			query = "SELECT users.first_name, users.last_name, transactions.id, products.id, products.category, products.name, products.price FROM transactions left join products on products.id = transactions.product_id left join users on users.id = products.user_id WHERE buyer_id = %(id)s;"
 			data = {
 				"id": session['user_id']
 			}
