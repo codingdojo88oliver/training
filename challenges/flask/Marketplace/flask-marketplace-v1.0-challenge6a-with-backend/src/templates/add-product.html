@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Create Advertisement</h1>
+        <a href="/dashboard" class="dashboard">Dashboard</a>
+        <a href="/logout" class="logout">Logout</a>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %} 
+        {% endwith %}
+        <form method="POST" action="/create-product">
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" placeholder="What are you selling?">
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="Arts & Crafts">Arts & Crafts</option>
+                <option value="Computer Accessories">Computer Accessories</option>
+                <option value="Video Games & Consoles">Video games & Consoles</option>
+            </select>
+            <label for="price">Price:</label>
+            <span>$</span>
+            <input type="number" id="price" placeholder="40.00" name="price">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    
+</body>
+</html>
+
