@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Hello, {{ name }}!!</h1>
+        <h1>Hello, {{ user[0]['name'] }}!!</h1>
         <a href="/logout" class="logout">Logout</a>
 
         {% with messages = get_flashed_messages() %}
