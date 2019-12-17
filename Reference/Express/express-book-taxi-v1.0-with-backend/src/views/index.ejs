@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div id="container">
+		<h1>Welcome!</h1>
+		<div class="left_container">
+			<fieldset>
+				<legend>Register</legend>
+		        <%  if(session.reg_errors){ %>
+		        	<% for(var i in session.reg_errors) { %>
+			            <p class="error"><%= session.reg_errors[i] %></p>
+			        <% } %>
+			        <% session.reg_errors = null; %>
+		        <% } %>
+		        <%  if(session.reg_success){ %>
+		            <p class="success"><%= session.reg_success %></p>
+		            <% session.reg_success = null; %>
+		        <% } %>
+				<form action="/register" method="POST">
+					<div>
+						<span>Full Name:</span>
+						<input type="text" name="name">
+					</div>
+					<div>
+						<span>Username:</span>
+						<input type="text"  name="username">
+					</div>
+					<div>
+						<span>Password:</span>
+						<input type="password" name="password">
+					</div>
+					<div>
+						<span>Designation:</span>
+						<select name="designation" id="">
+							<option value="commuter">Commuter</option>
+							<option value="driver">Taxi Driver</option>
+						</select>
+					</div>
+					<div>
+						<input type="submit" value="Register">
+					</div>
+				</form>
+			</fieldset>
+		</div>	
+		<div class="right_container">
+			<fieldset>
+				<legend>Login</legend>
+		        <%  if(session.error_message_login){ %>
+		            <p class="error"><%= session.error_message_login %></p>
+		            <% session.error_message_login = null; %>
+		        <% } %>
+				<form action="/login" method="POST">
+					<div>
+						<span>Username:</span>
+						<input type="text" name="username" value="">
+					</div>
+					<div>
+						<span>Password:</span>
+						<input type="text" name="password" value="">
+					</div>
+					<div>
+						<span>Current Location:</span>
+						<select name="state" id="">
+							<option value="colorado">Colorado</option>
+							<option value="seattle">Seattle</option>
+							<option value="dallas">Dallas</option>
+						</select>
+					</div>
+					<div>
+						<input type="submit" value="Login">
+					</div>
+				</form>
+			</fieldset>
+		</div>			
+	</div>
+</body>
+</html>

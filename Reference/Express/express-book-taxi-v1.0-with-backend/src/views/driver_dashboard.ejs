@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/driver_dashboard.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div id="header">
+		<a href="/">logout</a>
+	</div>
+	<div id="container">
+		<h1>Hi, <%= user_session.name %></h1>
+		<div class="top_container">
+			<div id="pending_booking_list">
+				<h3>Pending Booking:</h3>
+				<% 	if(books != null || books != undefined){
+						for(var index in books){ 
+							if( books[index].status == 1) { %>
+								<div class="pending_booking">
+									<form action="update_book_status" method="POST" class="update_book_status">
+										<input type="hidden" class="book_id" name="book_id" value="<%= books[index].id %>">
+										<input type="hidden" name="book_status" value="2">
+										<input type="checkbox" class="book_status_trigger">
+									</form>
+									<div class="book_details">
+										<h3><%= books[index].commuter_name %></h3>
+										<p>Pick-up Area: <%= books[index].pick_up%></p>
+									</div>
+								</div>
+					<% 		} 
+						}
+					} %>
+			</div>
+		</div>
+		<div class="bottom_container">
+			<div id="accepted_booking_list">
+				<h3>Accepted Booking:</h3>
+				<% 	if(books != null || books != undefined){
+						for(var index in books){ 
+							if( books[index].status == 2 &&  books[index].is_drop_off != 2) { %>
+								<div class="accepted_booking">
+									<input type="checkbox" checked>
+									<div class="book_details">
+										<h3><%= books[index].commuter_name %></h3>
+										<p><span>Pick-up Area:</span><%= books[index].pick_up %></p>
+										<p><span>Drop Off:</span> <%= books[index].drop_off %></p>
+										<p><span>Current Status:</span> Accepted</p>
+										<form action="drop_off" method="post">
+											<input type="hidden" class="book_id" name="book_id" value="<%= books[index].id %>">
+											<select name="is_drop_off" id="">
+												<option value="1">Arrived at pick up point</option>
+												<option value="2">Dropped-off</option>
+											</select>
+											<input type="submit" value="Update">
+										</form>
+									</div>	
+								</div>
+				
+				<% 			} 
+						}	
+					} %>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$(".book_status_trigger").click(function(){
+				$(this).closest("form.update_book_status").submit();
+			})
+		})
+	</script>
+</body>
+</html>

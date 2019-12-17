@@ -1,0 +1,48 @@
+.search_result, .booking_action{
+    margin: 20px 0;
+}
+
+.search_result ul{
+    margin-top: 10px;
+    margin-bottom: 80px;
+}
+
+
+.search_result ul li:first-child{
+    border-top: 2px solid black;
+}
+
+.search_result ul li{
+    padding: 20px 0;
+    border-bottom: 2px solid black;
+    line-height: 30px;
+}
+
+.search_result ul li p:nth-child(2){
+    display: inline-block;
+    width: 300px;
+}
+
+.search_result ul li button{
+    display: inline-block
+}
+
+.my_booking h1{
+    margin: 20px 0;
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+}
+
+.my_booking {
+    line-height: 30px;
+}
+
+.my_booking .booking_status {
+   border: 1px solid black;
+   padding: 20px;
+   margin-bottom: 50px;;
+}
+
+textarea{
+    resize: none;
+}

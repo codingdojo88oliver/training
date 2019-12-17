@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+    <link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/commuter_dashboard.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/ae29d3f7f5.js"></script>
+</head>
+<body>
+	<div id="header">
+		<a href="/logout">logout</a>
+	</div>
+	<div id="container">
+		<h1>Hi <%= user_session.name %>, welcome to Book Taxi</h1>
+		<div class="booking_action">
+			<form action="update_location" method="post" id="update_location">
+				<select name="state" id="">
+					<option value="colorado" <%= user_session.state_id == 1 ? "selected" : "" %>>Colorado</option>
+					<option value="seattle" <%= user_session.state_id == 2 ? "selected" : "" %>>Seattle</option>
+					<option value="dallas" <%= user_session.state_id == 3 ? "selected" : "" %>>Dallas</option>
+				</select>
+				<input type="submit" value="Update State">
+			</form>
+		</div>
+		<div class="search_result">
+			<span>Search Result:</span>
+			<ul>
+				<% if(drivers != null || drivers != undefined){
+						for(var index in drivers){%>
+							<li>	
+								<p><a class="driver" href="/drivers/<%= drivers[index].id %>"><%= drivers[index].name %></a></p>
+								<p>Rating: 
+									<% for(var i = 0; i < parseInt(drivers[index].total_rating); i++){ %>
+										<i class="fas fa-star"></i>
+									<% } %>
+									
+									<%if (drivers[index].total_rating % 1 >= 0.1){ %>
+										<i class="fas fa-star-half-alt"></i>
+									<% } %>
+									
+									<% for(var i = 0; i <  parseInt((5 - drivers[index].total_rating)); i++){ %>
+										<i class="far fa-star"></i>
+									<% } %>
+								</p>
+								<form action="book" method="post">
+									<input type='hidden' class='driver_id' name='driver_id' value="<%= drivers[index].id %>">
+									<input type="hidden" name="state" value="<%= user_session.state %>">
+									<span>Pick Up</span>
+									<input type="text" class="pick_up" name="pick_up" value="SAN JUAN">
+									<span>State</span>
+									<span>Drop Off</span>
+									<input type="text" class="drop_off" name="drop_off" value="SAN FERNANDO">
+
+									<button class="commuter_book">Book</button>
+								</form>								
+							</li>
+				<% 		}	 
+			 		}	%>
+			</ul>
+		</div>
+		<% if(my_booking.length > 0){ %>
+			<div class="my_booking">
+				<h1>My Booking:</h1>
+				<p>Drop off : <%= (my_booking.length > 0) ? my_booking[0].drop_off : "" %></p>
+				<p>Status:</p>
+				<ul class="booking_status">
+					<% if(my_booking.length > 0){%>
+						<% if(my_booking[0].status == 2){%>
+							<li>
+								<span><%= (my_booking.length > 0) ? my_booking[0].driver_name : "" %> accepted your booking <%= (my_booking.length > 0) ? my_booking[0].updated_at : "" %></span>
+							</li>
+						<% }else{ %>
+							<li>
+								<span>You book <%= (my_booking.length > 0) ? my_booking[0].driver_name : "" %> 2019-06-10 22:13:27</span>
+							</li>
+						<% } %>
+					<% } %>
+				</ul>
+				<form action="driver_rating" method="post" class="driver_rating">
+					<p>Rating:
+						<i class="far fa-star star_1" data-star-id='1'></i>
+						<i class="far fa-star star_2" data-star-id='2'></i>
+						<i class="far fa-star star_3" data-star-id='3'></i>
+						<i class="far fa-star star_4" data-star-id='4'></i>
+						<i class="far fa-star star_5" data-star-id='5'></i>
+					</p>
+					<input type="hidden" name="rating_star" value="0" class="hidden_rating_star">
+					<input type="hidden" name="driver_id" value="<%= my_booking[0].driver_id %>">
+					<textarea name="comment" placeholder="Comment" id="" cols="30" rows="10"></textarea>
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+		<% } %>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$(".driver_rating .fa-star").click(function(){
+				var star = $(this)
+
+				if(star.hasClass("fas") && star.attr("data-star-id") == 1){
+					$(".driver_rating .fa-star").removeClass("fas").addClass("far")
+				}
+				else{
+					for(var index = 1; index <= 5; index++){
+						if(star.attr("data-star-id") >= index)
+							$(".star_"+ index).removeClass("far").addClass("fas")
+						else
+							$(".star_"+ index).removeClass("fas").addClass("far")
+					}
+				}
+
+				star.closest("form.driver_rating").find(".hidden_rating_star").val($(".driver_rating .fas").length);
+			})
+		})
+	</script>
+</body>
+</html>
