@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1>Hello, {{ user['name'] }}!</h1>
+        <a href="/logout" class="float-right">Logout</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}   
+    {% endwith %} 
+    <div class="row">
+        <h5>Virtual planes landed in your location:</h5>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Country of Origin</th>
+                    <th>Time Arrived</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            {% if secret_messages %}
+            <tbody>
+                {% for secret_message in secret_messages %}
+                <tr>
+                    <td><a class="received-plane" href="/received-planes/{{ secret_message['id'] }}">{{ secret_message['country'] }}</a></td>
+                    <td>{{ secret_message['created_at'] }}</td>
+                    <td>{{ secret_message['status'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+    <div class="row">
+        <h5>My Planes:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Stamps</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            {% if planes %}
+            <tbody>
+                {% for plane in planes %}
+                <tr>
+                    <td>
+                        {% if stamps %}
+                        {% for stamp in stamps %}
+                            {% if stamp['plane_id'] == plane['id']  %}
+                            <strong>{{ stamp['country'] }},</strong>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td><a class="my-plane" href="/my-planes/{{ plane['id']  }}">{{ plane['created_at'] }}</a></td>
+                    <td>{{ plane['status'] }}</td>
+                    <td>
+                        <form method="POST" action="/throw-plane">
+                            <input class="throw_plane_id" type="hidden" name="plane_id" value="{{ plane['id'] }}">
+                            <button class="btn btn-light">Throw Plane!</button>
+                        </form>
+                        <form method="POST" action="/delete-plane">
+                            <input class="delete_plane_id" type="hidden" name="plane_id" value="{{ plane['id'] }}">
+                            <button class="btn btn-link">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div> 
+    <div class="row">
+        <h5>Write your message:</h5>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <form method="post" action="/create-plane">
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        <textarea class="form-control" name="message"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary float-right">Create Paper Plane</button>
+            </form>                  
+        </div>
+    </div> 
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Events</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Hello, <%= user[0].name%>!!</h1>
+        <a href="/host-event" class="host">Host an Event</a>
+        <a href="/logout" class="logout">Logout</a>
+        <% if(messages.validation) { %>
+             <% for (var message of messages.validation) { %>
+             <div class="alert-danger" role="alert"><%= message %></div>
+             <% } %>
+         <% } else { %>
+            <% if(messages.success) { %>
+                <div class="alert-danger" role="alert">
+                     <%= messages.success %>
+                </div>
+            <% } %>
+         <% } %>
+        <h5>Upcoming Events:</h5>
+        <table class="table" id="upcoming_events">
+            <tbody>
+            <% if (events_not_yet_joined) { %> 
+                <% for (var upcoming_event of events_not_yet_joined) { %>
+                <tr>
+                    <td><strong><%= upcoming_event.event_name %></strong></td>
+                    <td>Date: <%= upcoming_event.date.toDateString()%></td>
+                    <td>Hosted by: <span><%= upcoming_event.user_name %></span></td>
+                    <td>
+                    <form method="POST" action="/join-event">
+                        <input type="hidden" class="event_id" name="event_id" value="<%= upcoming_event.id %>">
+                        <button class="join" type="submit">Join</button>
+                    </form>
+                </td>
+                </tr>
+                <% } %>
+            <% } %>
+            </tbody>
+        </table>
+        <h5>Events I'm Hosting:</h5>
+        <table class="table" id="events_im_hosting">
+            <tbody>
+                <% if (upcoming_joined_events) { %> 
+                    <% for (var joined_event of upcoming_joined_events) { %>
+                        <tr>
+                            <td><strong><%= joined_event.name %></strong></td>
+                            <td>Date: <%=joined_event.date.toDateString() %></td>
+                            <td>Hosted by: <span><%= joined_event.user_name %></span></td>
+                            <td>
+                                <form method="POST" action="/unjoin-event">
+                                    <input type="hidden" class="joined_id" name="joined_id" value="<%= joined_event.id %>">
+                                    <button type="submit">Leave</button>
+                                </form>                    
+                            </td>
+                        </tr>
+                        <% } %>
+                <% } %>
+            </tbody> 
+        </table>
+    </div>
+</body>
+</html>
+

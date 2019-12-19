@@ -76,7 +76,6 @@ def dashboard():
 				flash("Invalid session")
 				return redirect("/")
 			
-
 			mysql = connectToMySQL()
 			query = "SELECT * FROM planes WHERE user = %(id)s;"
 			planes = mysql.query_db(query, data)
@@ -144,9 +143,8 @@ def throwPlane():
 		}
 		user = mysql.query_db(query, data)
 
-
 		mysql = connectToMySQL()
-		query = "SELECT * FROM planes WHERE id = %(plane_id)s;"
+		query = "SELECT * FROM planes WHERE id = %(plane_id)s AND user = %(user_id)s;"
 		data = {
 			"plane_id": request.form['plane_id'],
 			"user_id": session['user_id'],
@@ -157,20 +155,19 @@ def throwPlane():
 		return redirect("/")
 	
 	try:
-		
-		mysql = connectToMySQL()
-		query = "SELECT * FROM users WHERE country = %(country)s and id != %(id)s;"
-		data = {
-			"id": session['user_id'],
-			"country": user[0]['country'],
 
+		mysql = connectToMySQL()
+		query = "SELECT * FROM users WHERE id = %(id)s;"
+		data = {
+			"id": session['user_id']
 		}
 		the_candidate = mysql.query_db(query, data)
+
 
 		mysql = connectToMySQL()
 		query = "INSERT INTO messages (receiver, plane, created_at) VALUES (%(user_id)s, %(plane_id)s, NOW());"
 		data = {
-			"user_id": the_candidate[0]['id'],
+			"user_id": session['user_id'],
 			"plane_id": request.form['plane_id'],	
 		}
 		created = mysql.query_db(query, data)
