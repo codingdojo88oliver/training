@@ -72,7 +72,7 @@ app.post('/register', function(req, res) {
     }
     if (errors.length) {
           for (var key in errors) {
-            req.flash('validation', errors[key]);
+            req.flash('messages', errors[key]);
         }
         res.redirect('/');
     }
@@ -81,7 +81,7 @@ app.post('/register', function(req, res) {
         connection.query("INSERT INTO users (name, email, password) VALUES(?,?,?)",
                      [req.body.name, req.body.email, req.body.password] );
 
-        req.flash('success',"User " + req.body.name + " with email " + req.body.email + " successfully registered!");
+        req.flash('messages',"User " + req.body.name + " with email " + req.body.email + " successfully registered!");
         res.redirect('/');
     }          
 });
@@ -99,13 +99,13 @@ app.post('/login', function (req, res) {
                     res.redirect('/dashboard');
                 }
                 else{
-                    req.flash('validation', "Invalid email and password combination");
+                    req.flash('messages', "Invalid email and password combination");
                     res.redirect('/');
                 }
             });
         }
         else{
-            req.flash('validation', "Email does not exist in the database");
+            req.flash('messages', "Email does not exist in the database");
             res.redirect('/');
         }
     });
@@ -116,23 +116,24 @@ app.get('/dashboard', function(req, res) {
        if (req.session.is_logged_in = true) {
             connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
                  if (err) {
-                    req.flash("Invalid session")
+                    req.flash('messages',"Invalid session")
                     res.redirect("/")
                  }
-
-                connection.query("SELECT *,events.date, events.name as event_name, users.name as user_name FROM events \
-                    LEFT JOIN users ON  users.id = events.user_id", (err, upcoming_events) =>{
-                    res.render('dashboard',{user: user, upcoming_events: upcoming_events});
-                });
+                 else{
+                    connection.query("SELECT *,events.date, events.name as event_name, users.name as user_name FROM events \
+                        LEFT JOIN users ON  users.id = events.user_id", (err, upcoming_events) =>{
+                        res.render('dashboard',{user: user, upcoming_events: upcoming_events});
+                    });
+                }
             });
        } 
        else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
        }
     }
     else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
     }
 });
@@ -142,8 +143,9 @@ app.get('/host-event', function(req, res) {
         if (err) {
             res.send("Something went wrong.") 
         }
-
-        res.render('host-event',{user: user});
+        else{
+            res.render('host-event',{user: user});
+        }
     });
 });
 
@@ -167,21 +169,22 @@ app.post('/create-event', function(req, res) {
     }
     if (errors.length) {
           for (var key in errors) {
-            req.flash('validation', errors[key]);
+            req.flash('messages', errors[key]);
         }
         res.redirect('/host-event');
     }
     else{
         connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
             if (err) {
-                req.flash('validation', "User is not logged in");
+                req.flash('messages', "User is not logged in");
                 res.redirect("/");   
             }
-            
-            connection.query("INSERT INTO events (user_id, name, date, location, description, max_attendees, created_at) VALUES(?,?,?,?,?,?,?)",
-                     [user[0].id, req.body.name, req.body.date, req.body.location, req.body.description, req.body.max_attendees, created_at] );
-            req.flash('validation',"Event name should be at least 5 characters!")
-            res.redirect('/host-event');
+            else{
+                connection.query("INSERT INTO events (user_id, name, date, location, description, max_attendees, created_at) VALUES(?,?,?,?,?,?,?)",
+                         [user[0].id, req.body.name, req.body.date, req.body.location, req.body.description, req.body.max_attendees, created_at] );
+                req.flash('messages',"Event name should be at least 5 characters!")
+                res.redirect('/host-event');
+            }
         });
     }
 

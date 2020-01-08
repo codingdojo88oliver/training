@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debate</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+</head>
+<body>
+   <div class="container">
+        <h1>Topic Title <small> User Name</small></h1>
+        <a href="/logout" class="logout">Logout</a>
+        <p>Topic Descrition</p>
+        <div class="container">
+            <h4>Agree</h4>
+            <div class="agree_item">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p class="user">by Some user</p>
+            </div>
+        </div>
+        <div class="container">
+            <h4>Neutral</h4>
+     
+            <div class="neutral_item">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p class="user">by Random user</p>
+            </div>
+
+        </div>     
+        <div class="container">
+            <h4>Disagree</h4>
+
+            <div class="disagree_item">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p class="user">by Some user</p>
+            </div>
+        </div>   
+        <div class="alert-danger" role="alert">Error Alert Message</div>
+        <div class="alert-success" role="alert">Success Alert Message</div>
+        <form method="post" action="/create-argument">
+            <input type="hidden" name="topic_id" value="">
+            <span>I</span>
+            <select name="stance">
+                <option value="agree">Agree</option>
+                <option value="neutral">Neutral</option>
+                <option value="disagree">Disagree</option>
+            </select>
+            <span>because:</span>
+            <textarea name="argument" rows="5"></textarea>         
+            <button type="submit">Post Stance and Argument</button>
+        </form>
+    </div>
+</body>
+</html>
+

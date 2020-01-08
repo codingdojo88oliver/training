@@ -12,16 +12,10 @@
 <body>
     <h1>Welcome!</h1>
 	<div class="container">
-		<% if(messages.validation) { %>
-		     <% for (var message of messages.validation) { %>
+		<% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
 		     <div class="alert-danger" role="alert"><%= message %></div>
 		     <% } %>
-		 <% } else { %>
-		 	<% if(messages.success) { %>
-			 	<div class="alert-danger" role="alert">
-					 <%= messages.success %>
-				</div>
-			<% } %>
 		 <% } %>
 		<form method="post" action="/register">
 			<h5>Register</h5>

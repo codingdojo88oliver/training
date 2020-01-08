@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debate</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+</head>
+<body>
+   <div class="container">
+        <h1><%= topic[0].title %> <small><%= topic[0].user_name %></small></h1>
+        <a href="/logout" class="logout">Logout</a>
+        <p><%= topic[0].description  %></p>
+        <div class="container">
+            <h4>Agree</h4>
+            <% if (arguments) { %>
+                <% for (var argument of arguments) { %>
+                    <% if (argument.stance == "agree") { %>            
+                        <div class="agree_item">
+                            <p><%= argument.argument %></p>
+                            <p class="user">by <a href="/users/<%= argument.user_id %>"><%= argument.user_name %></a></p>
+                            <a href="" class="agree-points"><%= argument.point %> points </a>   
+                        </div>
+                    <% } %>
+                <% } %>
+            <% } %>
+        </div>
+        <div class="container">
+            <h4>Neutral</h4>
+            <% if (arguments) { %>
+                <% for (var argument of arguments) { %>
+                    <% if (argument.stance == "neutral") { %>      
+                        <div class="neutral_item">
+                            <p><%= argument.argument %></p>
+                             <p class="user">by <a href="/users/<%= argument.user_id %>"><%= argument.user_name %></a></p>
+                        </div>
+                    <% } %>
+                <% } %>
+            <% } %>
+        </div>     
+        <div class="container">
+            <h4>Disagree</h4>
+            <% if (arguments) { %>
+                <% for (var argument of arguments) { %>
+                    <% if (argument.stance == "disagree") { %>    
+                        <div class="disagree_item">
+                            <p><%= argument.argument %></p>
+                            <p class="user">by <a href="/users/<%= argument.user_id %>"><%= argument.user_name %></a></p>
+                        </div>
+                    <% } %>
+                <% } %>
+            <% } %>
+        </div>   
+        <% if(messages.messages) { %>
+             <% for (var message of messages.messages) { %>
+             <div class="alert-danger" role="alert"><%= message %></div>
+             <% } %>
+         <% } %>
+        <form method="post" action="/create-argument">
+            <input type="hidden" name="topic_id" value="<%= topic[0].id %>">
+            <span>I</span>
+            <select name="stance">
+                <option value="agree">Agree</option>
+                <option value="neutral">Neutral</option>
+                <option value="disagree">Disagree</option>
+            </select>
+            <span>because:</span>
+            <textarea name="argument" rows="5"></textarea>         
+            <button type="submit">Post Stance and Argument</button>
+        </form>
+    </div>
+</body>
+</html>
+

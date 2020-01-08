@@ -72,7 +72,7 @@ app.post('/register', function(req, res) {
     }
     if (errors.length) {
           for (var key in errors) {
-            req.flash('validation', errors[key]);
+            req.flash('messages', errors[key]);
         }
         res.redirect('/');
     }
@@ -81,7 +81,7 @@ app.post('/register', function(req, res) {
         connection.query("INSERT INTO users (name, email, password) VALUES(?,?,?)",
                      [req.body.name, req.body.email, req.body.password] );
 
-        req.flash('success',"User " + req.body.name + " with email " + req.body.email + " successfully registered!");
+        req.flash('messages',"User " + req.body.name + " with email " + req.body.email + " successfully registered!");
         res.redirect('/');
     }          
 });
@@ -99,13 +99,13 @@ app.post('/login', function (req, res) {
                     res.redirect('/dashboard');
                 }
                 else{
-                    req.flash('validation', "Invalid email and password combination");
+                    req.flash('messages', "Invalid email and password combination");
                     res.redirect('/');
                 }
             });
         }
         else{
-            req.flash('validation', "Email does not exist in the database");
+            req.flash('messages', "Email does not exist in the database");
             res.redirect('/');
         }
     });
@@ -116,67 +116,68 @@ app.get('/dashboard', function(req, res) {
        if (req.session.is_logged_in = true) {
             connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
                 if (err) {
-                    req.flash("Invalid session")
+                    req.flash('messages',"Invalid session")
                     res.redirect("/")
                  }
-                
-                 connection.query("SELECT *, events.date AS event_date, events.id AS event_id,  joins.id AS join_id, users.name AS user_name FROM joins \
-                    LEFT JOIN events ON events.id = joins.event_id \
-                    LEFT JOIN users ON joins.user_id = users.id WHERE users.id = ?",[req.session.user_id], (err, joined_events) =>{
-                   
-                    var upcoming_joined_event_ids = [];
-                    var past_joined_event_ids = [];
-                    var all_joined_event_ids = [];
-                    var utc = moment().format("YYYY-MM-DD HH:mm:ss");
+                else{
+                         connection.query("SELECT *, events.date AS event_date, events.id AS event_id,  joins.id AS join_id, users.name AS user_name FROM joins \
+                            LEFT JOIN events ON events.id = joins.event_id \
+                            LEFT JOIN users ON joins.user_id = users.id WHERE users.id = ?",[req.session.user_id], (err, joined_events) =>{
+                           
+                            var upcoming_joined_event_ids = [];
+                            var past_joined_event_ids = [];
+                            var all_joined_event_ids = [];
+                            var utc = moment().format("YYYY-MM-DD HH:mm:ss");
 
-                    if (joined_events.length > 0) {
-                        for (var joined_event in joined_events){
-                            all_joined_event_ids.push(joined_events[joined_event].event_id);
-                               
-                               var event_date = moment(joined_events[joined_event].event_date).format("YYYY-MM-DD HH:mm:ss")
+                            if (joined_events.length > 0) {
+                                for (var joined_event in joined_events){
+                                    all_joined_event_ids.push(joined_events[joined_event].event_id);
+                                       
+                                       var event_date = moment(joined_events[joined_event].event_date).format("YYYY-MM-DD HH:mm:ss")
 
-                                if (event_date > utc){
-                                    
-                                    upcoming_joined_event_ids.push(joined_events[joined_event].event_id);          
+                                        if (event_date > utc){
+                                            
+                                            upcoming_joined_event_ids.push(joined_events[joined_event].event_id);          
+                                        }
+                                        else{
+                                            past_joined_event_ids.push(joined_events[joined_event].event_id);
+                                        }
                                 }
-                                else{
-                                    past_joined_event_ids.push(joined_events[joined_event].event_id);
-                                }
-                        }
-                    }
-                    
-                    connection.query('SELECT *,events.date, events.name, users.name as user_name, events.id FROM events \
-                            LEFT JOIN users ON  users.id = events.user_id  WHERE events.id IN (' + upcoming_joined_event_ids + ')', (err, upcoming_joined_events) =>{
-                        
-                        connection.query('SELECT *,events.date, events.name as event_name, users.name as user_name, events.id FROM events \
-                            LEFT JOIN users ON  users.id = events.user_id  WHERE events.id IN (' + past_joined_event_ids + ')', (err, past_joined_events) =>{
+                            }
                             
-                            connection.query('SELECT *,events.date, events.name as event_name, users.name as user_name, events.id FROM events \
-                                LEFT JOIN users ON  users.id = events.user_id  WHERE events.id NOT IN (' + all_joined_event_ids + ')', (err, events_not_yet_joined) =>{
+                            connection.query('SELECT *,events.date, events.name, users.name as user_name, events.id FROM events \
+                                    LEFT JOIN users ON  users.id = events.user_id  WHERE events.id IN (' + upcoming_joined_event_ids + ')', (err, upcoming_joined_events) =>{
+                                
+                                connection.query('SELECT *,events.date, events.name as event_name, users.name as user_name, events.id FROM events \
+                                    LEFT JOIN users ON  users.id = events.user_id  WHERE events.id IN (' + past_joined_event_ids + ')', (err, past_joined_events) =>{
+                                    
+                                    connection.query('SELECT *,events.date, events.name as event_name, users.name as user_name, events.id FROM events \
+                                        LEFT JOIN users ON  users.id = events.user_id  WHERE events.id NOT IN (' + all_joined_event_ids + ')', (err, events_not_yet_joined) =>{
 
-                                var upcoming_events = [];    
-                                var count = 0;
-                                for (var event in events_not_yet_joined){
-                                    count += 1;
-                                    if (events_not_yet_joined[event].max_attendees > count){
-                                        upcoming_events.push(events_not_yet_joined[event]);
-                                    }
-                                }
-                                res.render('dashboard',{user: user, upcoming_joined_events: upcoming_joined_events, past_joined_events: past_joined_events, events_not_yet_joined: upcoming_events}); 
+                                        var upcoming_events = [];    
+                                        var count = 0;
+                                        for (var event in events_not_yet_joined){
+                                            count += 1;
+                                            if (events_not_yet_joined[event].max_attendees > count){
+                                                upcoming_events.push(events_not_yet_joined[event]);
+                                            }
+                                        }
+                                        res.render('dashboard',{user: user, upcoming_joined_events: upcoming_joined_events, past_joined_events: past_joined_events, events_not_yet_joined: upcoming_events}); 
+                                    });
+                                });
                             });
-                        });
-                    });
 
-                });
+                        });
+                     }
             });
        } 
        else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
        }
     }
     else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
     }
 });
@@ -213,21 +214,22 @@ app.post('/create-event', function(req, res) {
     }
     if (errors.length) {
           for (var key in errors) {
-            req.flash('validation', errors[key]);
+            req.flash('messages', errors[key]);
         }
         res.redirect('/host-event');
     }
     else{
         connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
             if (err) {
-                req.flash('validation', "User is not logged in");
+                req.flash('messages', "User is not logged in");
                 res.redirect("/");
             }
-            
-            connection.query("INSERT INTO events (user_id, name, date, location, description, max_attendees, created_at) VALUES(?,?,?,?,?,?,?)",
-                     [user[0].id, req.body.name, req.body.date, req.body.location, req.body.description, req.body.max_attendees, created_at] );
-            req.flash('success',"You just created a new event!")
-            res.redirect('/dashboard');
+            else{
+                connection.query("INSERT INTO events (user_id, name, date, location, description, max_attendees, created_at) VALUES(?,?,?,?,?,?,?)",
+                         [user[0].id, req.body.name, req.body.date, req.body.location, req.body.description, req.body.max_attendees, created_at] );
+                req.flash('messages',"You just created a new event!")
+                res.redirect('/dashboard');
+            }
         });
     }
 
@@ -236,37 +238,33 @@ app.post('/create-event', function(req, res) {
 
 app.post('/join-event', function(req, res) {
     connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
-        if (user.length > 0) {
-           
-        }
-        else{
-            req.flash('validation', "User is not logged in");
+        if (err) {
+            req.flash('messages', "User is not logged in");
             res.redirect("/");
         }
-        connection.query("SELECT * FROM events WHERE id = ?", [req.body.event_id], (err, events) =>{
-          
-          var created_at = moment().format("YYYY-MM-DD HH:mm:ss");
-          connection.query("INSERT INTO joins (user_id, event_id, created_at) VALUES(?,?,?)",
-                     [user[0].id, events[0].id, created_at] );
-            req.flash('success',"You just joined an event!")
-            res.redirect('/dashboard');
-        });
-       
+        else{
+                connection.query("SELECT * FROM events WHERE id = ?", [req.body.event_id], (err, events) =>{
+                  
+                  var created_at = moment().format("YYYY-MM-DD HH:mm:ss");
+                  connection.query("INSERT INTO joins (user_id, event_id, created_at) VALUES(?,?,?)",
+                             [user[0].id, events[0].id, created_at] );
+                    req.flash('messages',"You just joined an event!")
+                    res.redirect('/dashboard');
+                });
+          }
     });
 });
 
 app.post('/unjoin-event', function(req, res) {
     connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
-        if (user.length > 0) {
-           
+        if (err) {
+           req.flash('messages', "User is not logged in");
+           res.redirect("/");
         }
         else{
-            req.flash('validation', "User is not logged in");
-            res.redirect("/");
+           req.flash('messages',"You just Unjoined an event!")
+           res.redirect('/dashboard'); 
         }
-        req.flash('success',"You just Unjoined an event!")
-        res.redirect('/dashboard');
-        
     });
 });
 

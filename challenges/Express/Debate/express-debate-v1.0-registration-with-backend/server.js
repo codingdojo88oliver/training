@@ -72,7 +72,7 @@ app.post('/register', function(req, res) {
     }
     if (errors.length) {
           for (var key in errors) {
-            req.flash('validation', errors[key]);
+            req.flash('messages', errors[key]);
         }
         res.redirect('/');
     }
@@ -95,20 +95,21 @@ app.get('/dashboard', function(req, res) {
        if (req.session.is_logged_in = true) {
             connection.query("SELECT *FROM users WHERE id = ?", [req.session.user_id], (err, user) =>{
                  if (err) {
-                    req.flash("Invalid session")
+                    req.flash('messages',"Invalid session")
                     res.redirect("/")
                  }
-                 
-                 res.render('dashboard',{user: user});
+                 else{
+                     res.render('dashboard',{user: user});
+                 }
             });
        } 
        else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
        }
     }
     else{
-        req.flash("User is not logged in")
+        req.flash('messages',"User is not logged in")
         res.redirect("/")
     }
 });
