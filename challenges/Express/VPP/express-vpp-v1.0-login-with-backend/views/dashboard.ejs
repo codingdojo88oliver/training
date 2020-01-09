@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+   <div class="container">
+	    <h1>Hello, <%= user[0].name %>!</h1>
+	    <p>You have successfully registered / logged in!</p>
+	    <p>Here are the information you entered: </p>
+	    <p>Email: <%= user[0].email %></p>
+    	<p>Country: <%= user[0].country %></p>
+    	<p>Interests: 
+		<% if (user[0].interest) { %>
+			<% for (var interest of user){ %>
+				<strong><%= user[0].interest %> </strong>
+			<% } %>
+		<% } %>
+	    </p>
+	    <p>Languages: 
+	   	<% if (user[0].language) { %>
+	   		<% for (var languages of user){ %>
+				<strong><%= user[0].language %></strong>
+			<% } %>
+		<% } %>
+	    </p>
+	</div>
+</body>
+</html>
+

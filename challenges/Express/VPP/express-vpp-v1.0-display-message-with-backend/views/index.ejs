@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+</head>
+<body>
+    <h1>Welcome!</h1>
+	<div class="container">
+		<% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
+		     <div class="alert-danger" role="alert"><%= message %></div>
+		     <% } %>
+		 <% } %>
+		<form method="post" id="login_form" action="/login">
+			<h5>Login</h5>
+			<label for="email">Email</label>
+			<input type="email" name="email" id="email" placeholder="ex. brian@datacompass.com">
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password">
+			<button type="submit">Login</button>
+		</form>	
+	</div>
+</body>
+</html>
+

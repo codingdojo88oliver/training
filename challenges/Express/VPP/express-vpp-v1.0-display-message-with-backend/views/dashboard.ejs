@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+   <div class="container">
+	    <h1>Hello, <%= user[0].name %>!</h1>
+	    <a href="" class="logout">Logout</a>
+	    <% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
+		     <div class="alert-danger" role="alert"><%= message %></div>
+		     <% } %>
+		 <% } %>
+	    <h5>My Planes:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <% if (planes) { %>
+            <tbody>
+                <%  for (var plane of planes) {%> 
+                <tr>
+                    <td>
+                        <strong><%= plane.id %></strong>
+                    </td>
+                    <td><a class="my-plane" href="/planes/<%= plane.id %>">
+                        <%= plane.created_at.toDateString() %></a></td>
+                    <td><%= plane.status %></td>
+                </tr>
+                <% } %>
+            </tbody>
+            <% } %>
+        </table>  
+        <form method="post" action="/create-plane" class='textarea-form'>
+            <h5>Write your message:</h5>
+            <textarea class="form-control" name="message"></textarea>
+            <button type="submit" class="btn btn-primary float-right">Create Paper Plane</button>
+        </form>
+	</div>
+</body>
+</html>
+

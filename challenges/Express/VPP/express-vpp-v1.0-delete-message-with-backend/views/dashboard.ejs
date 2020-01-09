@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper Plane</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+   <div class="container">
+	    <h1>Hello, <%= user[0].name %>!</h1>
+        <h5>Your Country: <%= user[0].country %></h5>
+	    <a href="/logout" class="logout">Logout</a>
+	    <% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
+		     <div class="alert-danger" role="alert"><%= message %></div>
+		     <% } %>
+		 <% } %>
+        <h5>Virtual planes landed in your location:</h5>
+        <table class="table" id="messages-received">
+            <thead>
+                <tr>
+                    <th>Plane ID</th>
+                    <th>Time Arrived</th>
+                </tr>
+            </thead>
+            <% if (secret_messages){ %>
+            <tbody>
+                <% for (var secret_message of secret_messages) { %>
+                <tr>
+                    <td><%= secret_message.plane_id %></td>
+                    <td><a class="received-plane" href="/planes/<%=  secret_message.plane_id %>"><%=  secret_message.created_at.toDateString() %></a></td>
+                </tr>
+                <% } %>
+            </tbody>
+            <% } %>
+        </table>
+	    <h5>My Planes:</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <% if (planes) { %>
+            <tbody>
+                <%  for (var plane of planes) {%> 
+                <tr>
+                    <td>
+                        <strong><%= plane.id %></strong>
+                    </td>
+                    <td><a class="my-plane" href="/planes/<%= plane.id %>">
+                        <%= plane.created_at.toDateString() %></a></td>
+                    <td><%= plane.status %></td>
+                    <td>
+                        <form method="POST" action="/delete-plane">
+                            <input class="delete_plane_id" type="hidden" name="plane_id" value="<%= plane.id %>">
+                            <button class="btn btn-link">Delete</button>
+                        </form>                    
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+            <% } %>
+        </table>  
+        <form method="post" action="/create-plane" class='textarea-form'>
+            <h5>Write your message:</h5>
+            <textarea class="form-control" name="message"></textarea>
+            <button type="submit" class="btn btn-primary float-right">Create Paper Plane</button>
+        </form>
+	</div>
+</body>
+</html>
+
