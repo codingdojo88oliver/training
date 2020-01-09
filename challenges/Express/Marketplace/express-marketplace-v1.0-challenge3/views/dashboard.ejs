@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+   <div class="container">
+        <h1>Hello, <%= user[0].first_name %>!!</h1>
+        <a href="/add-product" class="my_transactions">Add Products</a>
+    	<a href="/logout" class="logout">Logout</a>
+        <% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
+		     <div class="alert-danger" role="alert"><%= message %></div>
+		     <% } %>
+		<% } %>
+		<div class="container">
+		    <h3>Items I'm Selling:</h3>
+		        <% if (categories){ %>
+		            <h4>Arts & Crafts</h4>
+		            <ul>
+		                <li>
+		                    <p><a class="product" href="/products/1">Some test Product</a><span>$100</span></p>
+		                </li>
+		            </ul>
+		        <% } %>
+	    </div>
+	    <div class="container" id="other-products">
+	        <h3>Products for Sale:</h3>
+	        <% if (categories){ %>
+	            <ul>
+	                <li>
+	                    <p><a class="product" href="/products/1">Some test Product</a><span>$100</span></p>
+	                    <p>Posted by {{ product.user.first_name }} {{ product.user.last_name|slice:"1" }}.</p>
+	                </li>
+	            </ul>
+		     <% } %>
+	    </div>
+    </div>
+</body>
+</html>
+
