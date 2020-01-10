@@ -124,19 +124,22 @@ app.get('/dashboard', function(req, res) {
                     req.flash('messages',"Invalid session")
                     res.redirect("/")
                  }
-                 // wala pa nahuman.
                  else{
-                     var categories = [
-                                    "Arts & Crafts",
-                                    "Computer Accessories",
-                                    "Video Games & Consoles"
-                                ];
-                     var Available = "Available";
-                     connection.query("SELECT *, users.first_name as user_first_name, users.last_name as user_last_name, products.created_at, products.id FROM products \
-                                LEFT JOIN users ON users.id = products.user_id WHERE status = ?", [Available], (err, products) =>{
-                                    
-                                res.render('dashboard',{user: user, products: products, categories: categories});
-                     });
+                        connection.query("SELECT *, products.name as product_name, users.first_name as product_user_first_name, users.last_name as product_user_last_name FROM transactions \
+                                         LEFT JOIN users ON users.id = transactions.buyer_id \
+                                         LEFT JOIN products ON products.id = transactions.product_id WHERE buyer_id = ?", [user[0].id], (err, items_bought) =>{
+                             var categories = [
+                                            "Arts & Crafts",
+                                            "Computer Accessories",
+                                            "Video Games & Consoles"
+                                        ];
+                             var Available = "Available";
+                             connection.query("SELECT *, users.first_name as user_first_name, users.last_name as user_last_name, products.created_at, products.id FROM products \
+                                        LEFT JOIN users ON users.id = products.user_id WHERE status = ?", [Available], (err, products) =>{
+                                           
+                                        res.render('dashboard',{user: user, products: products, categories: categories, items_bought: items_bought});
+                             });
+                        });
                  }
             });
        } 

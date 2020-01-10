@@ -11,7 +11,7 @@
 </head>
 <body>
    <div class="container">
-        <h1>Hello, <%= user[0].first_name %>!!</h1>
+        <h1>Hello, <%= user[0].first_name %>! Welcome to the Marketplace.</h1>
         <a href="/add-product" class="my_transactions">Add Products</a>
     	<a href="/logout" class="logout">Logout</a>
         <% if(messages.messages) { %>
@@ -72,31 +72,31 @@
 		         <% } %>
 		     <% } %>
 	    </div>
-	    {% if items_bought %}
+	    <% if (items_bought) { %>
 	    <div class="container" id="bought-products">
 	        <h3>Items Bought:</h3>
-	        {% if categories %}
-	            {% for category in categories %}
-	                <h4>{{ category }}</h4>
+	        <% if (categories){ %>
+	            <% for (var category of categories){ %>
+	                <h4><%= category %><h4>
 	                <ul class="items_bought">
-	                    {% for item_bought in items_bought %}
-	                        {% if item_bought.category == category %}
+	                    <%  for (var item_bought of items_bought) { %>
+	                        <%   if (item_bought.category == category) { %>
 	                        <li>
 	                            <p>
-	                                <a href="">{{ item_bought.product.name }}</a>
-	                                <span>${{ item_bought.price }}</span>
+	                                <a href=""><%= item_bought.product_name %></a>
+	                                <span>$<%= item_bought.price %></span>
 	                            </p>
 	                            <p>
-	                                Posted By {{ item_bought.product.user.first_name }} {{ item_bought.product.user.last_name|slice:"1" }}.
+	                                Posted By <%= item_bought.product_user_first_name %> <%= item_bought.product_user_last_name %>.
 	                            </p>
 	                        </li>
-	                        {% endif %}
-	                    {% endfor %}
+	                        <% } %>
+		     			<% } %>
 	                </ul>
-	            {% endfor %}
-	        {% endif %}    
+	            <% } %>
+		     <% } %>
 	    </div>
-	    {% endif %}
+	     <% } %>
     </div>
 </body>
 </html>

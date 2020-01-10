@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+   <div class="container">
+        <h1>Hello, <%= user[0].first_name %>! Welcome to the Marketplace.</h1>
+        <a href="/add-product" class="my_transactions">Add Products</a>
+    	<a href="/logout" class="logout">Logout</a>
+        <% if(messages.messages) { %>
+		     <% for (var message of messages.messages) { %>
+		     <div class="alert-danger" role="alert"><%= message %></div>
+		     <% } %>
+		<% } %>
+		<div class="container">
+		    <h3>Items I'm Selling:</h3>
+		        <% if (categories){ %>
+		            <% for (var category of categories){ %>
+		                <h4><%= category %><h4>
+		                <% if (products){ %>
+		                    <ul>
+		                    <% for (var product of products){ %>
+		                        <% if (product.category == category) { %>
+		                            <%  if (product.status == "Available"){ %>
+		                                <% if (product.user_id == user[0].id){ %>
+		                                <li>
+		                                    <p><a class="product" href=""><%=  product.name %></a> <span>$<%= product.price %></span></>
+		                                </li>
+		                                 <% } %>
+		                            <% } %>
+		                        <% } %>
+		                   	<% } %>
+		                   	<% if (negotiations){ %>
+		                        <% for (var negotiation of negotiations) { %>
+		                            <% if (negotiation.category == category){ %>
+		                                <%  if (negotiation.negotiator_id == user[0].id) { %>
+		                                    <% if (negotiation.status != "Sold"){ %>
+		                                        <li>
+		                                            <p><a href=""><%= negotiation.product_name %></a> <span>Your selling price: $<%= negotiation.product_price %></span></p>
+		                                            <p>Buyer: <%= negotiation.user_first_name %> <%=  negotiation.user_last_name  %>. <span>Asking price: $<%= negotiation.price %></span></p>
+		                                            <p>
+		                                            <form method="POST" action="" class="form-inline">
+		                                                <input type="hidden" name="negotiation_id" value="<%= negotiation.id %>">
+		                                                <button type="submit">Approve</button>
+		                                            </form>                                            
+		                                            </p>
+		                                        </li>
+		                                    <% } %>
+					             		<% } %>
+		                            <% } %>
+					             <% } %>
+					        <% } %>
+		                    </ul>
+		                 <% } %>
+		             <% } %>
+		        <% } %>
+	    </div>
+	    <div class="container" id="other-products">
+	        <h3>Products for Sale:</h3>
+	        <% if (categories){ %>
+	            <% for (var category of categories){ %>
+	                <h4><%= category %><h4>
+	                <% if (other_products){ %>
+	                    <ul>
+	                    <% for (var product of other_products){ %>
+	                        <% if (product.category == category) { %>
+	                            <%  if (product.status == "Available"){ %>
+		                                <% if (product.user_id != user[0].id){ %>
+	                                <li>
+	                                    <p><a class="product" href=""><%=  product.name %></a> <span>$<%= product.price%></span></p>
+	                                    <p>Posted by <%=  product.user_first_name %> <%=  product.user_last_name %>.</p>
+	                                     <p>
+	                                       <form method="post" action="/negotiate">
+	                                            <label for="price">Asking Price:</label>
+	                                            <span>$</span>
+	                                            <input type="number" id="price" placeholder="40.00" name="price">
+	                                            <input type="hidden" name="product_id" value="<%= product.id %>">
+	                                            <button type="submit">Negotiate</button>
+	                                        </form>
+	                                    </p>
+	                                </l>
+	                                <% } %>
+	                            <% } %>
+					         <% } %>
+					     <% } %>
+	                    </ul>
+	                <% } %>
+		         <% } %>
+		     <% } %>
+	    </div>
+	    <% if (negotiations){ %>
+	    <div class="container" id="negotiating-products">
+	        <h3>Items I am Negotiating:</h3>
+	        <% if (categories){ %>
+	             <% for (var category of categories){ %>
+	               <h4><%= category %><h4>
+	                <ul>
+	                <% for (var negotiation of negotiations) { %>
+	                    <%  if (negotiation.negotiator_id == user[0].id) { %>
+	                        <% if (negotiation.status != "Sold"){ %>
+	                            <% if (negotiation.category == category){ %>
+	                            <li>
+	                                <p>
+	                                    <a href=""><%= negotiation.product_name %></a>
+	                                    <span>Selling price: $<%= negotiation.product_price %></span>
+	                                </p>
+	                                <p>
+	                                    Posted by <%= negotiation.user_first_name %> <%= negotiation.user_last_name %>.
+	                                    <span>Your asking price: $<%= negotiation.price %></span>
+	                                </p>
+	                            </li>
+	                            <% } %>
+		     				<% } %>
+	                    <% } %>
+		     		<% } %>
+	                </ul>
+	            <% } %>
+		     <% } %>
+	    </div>
+	    <% } %>
+	    <% if (items_bought) { %>
+	    <div class="container" id="bought-products">
+	        <h3>Items Bought:</h3>
+	        <% if (categories){ %>
+	            <% for (var category of categories){ %>
+	                <h4><%= category %><h4>
+	                <ul class="items_bought">
+	                    <%  for (var item_bought of items_bought) { %>
+	                        <%   if (item_bought.category == category) { %>
+	                        <li>
+	                            <p>
+	                                <a href=""><%= item_bought.product_name %></a>
+	                                <span>$<%= item_bought.price %></span>
+	                            </p>
+	                            <p>
+	                                Posted By <%= item_bought.product_user_first_name %> <%= item_bought.product_user_last_name %>.
+	                            </p>
+	                        </li>
+	                        <% } %>
+		     			<% } %>
+	                </ul>
+	            <% } %>
+		     <% } %>
+	    </div>
+	     <% } %>
+    </div>
+</body>
+</html>
+
